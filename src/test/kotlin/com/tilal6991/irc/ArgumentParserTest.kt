@@ -1,5 +1,6 @@
-package com.tilal6991.relay
+package com.tilal6991.irc
 
+import com.tilal6991.irc.ArgumentParser
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.fail
 import org.junit.Test

@@ -1,4 +1,4 @@
-package com.tilal6991.relay;
+package com.tilal6991.irc;
 
 import java.util.Arrays;
 import java.util.List;
