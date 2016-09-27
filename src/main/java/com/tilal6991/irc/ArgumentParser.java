@@ -7,6 +7,8 @@ import java.util.Locale;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import static com.tilal6991.irc.Utils.getOrNull;
+
 /** Parser which considers a list of IRC message arguments and interprets them. */
 public class ArgumentParser {
 
@@ -36,8 +38,8 @@ public class ArgumentParser {
         callback.onQuit(getOrNull(arguments, 0));
         break;
       case "JOIN":
-        checkCountOneOf(command, arguments, 1, 3);
-        callback.onJoin(arguments.get(0), getOrNull(arguments, 1), getOrNull(arguments, 2));
+        checkCountGreaterThanEq(command, arguments, 1);
+        callback.onJoin(arguments.get(0), arguments.subList(1, arguments.size()));
         break;
       case "PART":
         checkCountOneOf(command, arguments, 1, 2);
@@ -134,13 +136,6 @@ public class ArgumentParser {
     }
   }
 
-  private static String getOrNull(List<String> list, int index) {
-    if (index >= list.size()) {
-      return null;
-    }
-    return list.get(index);
-  }
-
   private static int parseCode(String input) {
     int length = input.length();
     if (length != 3) {
@@ -170,7 +165,7 @@ public class ArgumentParser {
     void onQuit(@Nullable String reason);
 
     /** Callback method for JOIN command. */
-    void onJoin(@Nonnull String channel, @Nullable String account, @Nullable String realName);
+    void onJoin(@Nonnull String channel, @Nonnull List<String> args);
 
     /** Callback method for a MODE message */
     void onMode(@Nonnull String target, @Nonnull List<String> args);

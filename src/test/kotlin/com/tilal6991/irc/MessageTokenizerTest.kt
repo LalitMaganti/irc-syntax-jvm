@@ -1,6 +1,5 @@
 package com.tilal6991.irc
 
-import com.tilal6991.irc.MessageTokenizer
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert.fail
 import org.junit.Test

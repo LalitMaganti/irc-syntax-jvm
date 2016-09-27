@@ -1,6 +1,5 @@
 package com.tilal6991.irc
 
-import com.tilal6991.irc.ArgumentParser
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.fail
 import org.junit.Test
@@ -120,14 +119,10 @@ class ArgumentParserTest {
     verifyTooFew("JOIN", emptyList())
 
     parse("JOIN", listOf("channel"))
-    verify(callback).onJoin("channel", null, null)
-
-    verifyTooMany("JOIN", listOf("first", "second"))
+    verify(callback).onJoin("channel", emptyList())
 
     parse("JOIN", listOf("channel", "account", "realname"))
-    verify(callback).onJoin("channel", "account", "realname")
-
-    verifyTooMany("JOIN", listOf("first", "second", "third", "fourth"))
+    verify(callback).onJoin("channel", listOf("account", "realname"))
   }
 
   @Test fun testCap() {
