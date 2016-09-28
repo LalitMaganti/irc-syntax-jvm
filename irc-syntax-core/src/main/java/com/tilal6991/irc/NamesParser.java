@@ -26,7 +26,7 @@ public class NamesParser {
   public static <T> T parse(List<String> arguments, Callback<T> callback) {
     // RFC1459 and RFC2812 differ here - account for both cases intelligently.
     if (arguments.size() < 2) {
-      throwCountException(2, arguments.size());
+      throw new IllegalArgumentException(createExceptionString(2, arguments.size()));
     }
 
     // RFC2812 specifies that there should be a one character channel descriptor here.
@@ -38,14 +38,14 @@ public class NamesParser {
       offset = 1;
 
       if (arguments.size() != 3) {
-        throwCountException(3, arguments.size());
+        throw new IllegalArgumentException(createExceptionString(3, arguments.size()));
       }
     } else {
       descriptor = null;
       offset = 0;
 
       if (arguments.size() != 2) {
-        throwCountException(3, arguments.size());
+        throw new IllegalArgumentException(createExceptionString(3, arguments.size()));
       }
     }
 
@@ -65,13 +65,12 @@ public class NamesParser {
     return callback.onNames(descriptor, channel, names);
   }
 
-  private static void throwCountException(int expected, int actual) {
-    throw new IllegalArgumentException(
-        String.format(
-            Locale.getDefault(),
-            "Expected argument count: %s. Actual argument count: %d.",
-            expected,
-            actual));
+  private static String createExceptionString(int expected, int actual) {
+    return String.format(
+        Locale.getDefault(),
+        "Expected argument count: %s. Actual argument count: %d.",
+        expected,
+        actual);
   }
 
   /** Callback class which will be invoked when parsing is successful */
