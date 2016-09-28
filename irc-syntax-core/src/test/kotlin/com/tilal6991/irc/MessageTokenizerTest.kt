@@ -43,6 +43,11 @@ class MessageTokenizerTest {
     verify(callback).onLineTokenized(listOf("a=b", "connection=d"), null, "COMMAND", listOf("arg"))
   }
 
+  @Test fun testTagsWithSemiColonInArguments() {
+    tokenize("@a=b;connection=d COMMAND :arg; arg")
+    verify(callback).onLineTokenized(listOf("a=b", "connection=d"), null, "COMMAND", listOf("arg; arg"))
+  }
+
   @Test fun testPrefixedCommand() {
     tokenize(":test COMMAND arg")
     verify(callback).onLineTokenized(null, "test", "COMMAND", listOf("arg"))
