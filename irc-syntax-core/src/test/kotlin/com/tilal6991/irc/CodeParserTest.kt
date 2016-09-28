@@ -28,6 +28,24 @@ class CodeParserTest {
     verify(callback).onIsupport("message", fourIemList())
   }
 
+  @Test fun testNamReply() {
+    parse(353, emptyList())
+    verify(callback).onNamReply(emptyList())
+
+    parse(353, fourIemList())
+    verify(callback).onNamReply(fourIemList())
+  }
+
+  @Test fun testEndOfNames() {
+    verifyTooFew(366, emptyList())
+    verifyTooFew(366, oneItemList())
+
+    parse(366, listOf("channel", "message"))
+    verify(callback).onEndOfNames("channel", "message")
+
+    verifyTooMany(366, threeItemList())
+  }
+
   private fun verifyTooMany(code: Int, arguments: List<String>) {
     verifyFail(code, arguments, "Too many items")
   }
