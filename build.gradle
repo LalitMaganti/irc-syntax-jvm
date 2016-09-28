@@ -1,4 +1,4 @@
-allprojects {
+subprojects {
     buildscript {
         repositories {
             jcenter()
@@ -9,6 +9,9 @@ allprojects {
         jcenter()
         maven { url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1' }
     }
+
+    group = GROUP
+    version = VERSION_NAME
 }
 
 apply from: rootProject.file('dependencies.gradle')
