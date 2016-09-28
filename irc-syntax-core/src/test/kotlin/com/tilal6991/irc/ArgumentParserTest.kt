@@ -16,6 +16,9 @@ class ArgumentParserTest {
 
     parse("12m", emptyList())
     verify(callback).onUnknownCommand("COMMAND", emptyList())
+
+    parse("12#", emptyList())
+    verify(callback).onUnknownCommand("COMMAND", emptyList())
   }
 
   @Test fun testPing() {
