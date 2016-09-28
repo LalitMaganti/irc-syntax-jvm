@@ -23,27 +23,23 @@ public class CodeParser {
    * @param callback the callback to invoke with the parsed arguments.
    * @throws IllegalArgumentException if an error occurs in the parsing.
    */
-  public static void parse(int code, @Nonnull List<String> arguments, @Nonnull Callback callback) {
+  public static <T> T parse(
+      int code, @Nonnull List<String> arguments, @Nonnull Callback<T> callback) {
     switch (code) {
       case RPL_WELCOME:
         checkCountIs(code, arguments, 1);
-        callback.onWelcome(arguments.get(0));
-        break;
+        return callback.onWelcome(arguments.get(0));
       case RPL_ISUPPORT:
         checkCountIs(code, arguments, 2);
-        callback.onIsupport(
+        return callback.onIsupport(
             arguments.get(arguments.size() - 1), arguments.subList(0, arguments.size() - 1));
-        break;
       case RPL_NAMREPLY:
-        callback.onNamReply(arguments);
-        break;
+        return callback.onNamReply(arguments);
       case RPL_ENDOFNAMES:
         checkCountIs(code, arguments, 2);
-        callback.onEndOfNames(arguments.get(0), arguments.get(1));
-        break;
+        return callback.onEndOfNames(arguments.get(0), arguments.get(1));
       default:
-        callback.onUnknownCode(code, arguments);
-        break;
+        return callback.onUnknownCode(code, arguments);
     }
   }
 
@@ -60,21 +56,21 @@ public class CodeParser {
   }
 
   /** Callback class which will be invoked when parsing is successful */
-  public interface Callback {
+  public interface Callback<T> {
 
     /** Callback method for RPL_WELCOME code. */
-    void onWelcome(@Nonnull String message);
+    T onWelcome(@Nonnull String message);
 
     /** Callback method for RPL_ISUPPORT code. */
-    void onIsupport(@Nonnull String message, @Nonnull List<String> tokens);
+    T onIsupport(@Nonnull String message, @Nonnull List<String> tokens);
 
     /** Callback method for RPL_NAMREPLY code. */
-    void onNamReply(@Nonnull List<String> arguments);
+    T onNamReply(@Nonnull List<String> arguments);
 
     /** Callback method for RPL_ENDOFNAMES code. */
-    void onEndOfNames(@Nonnull String channel, @Nonnull String message);
+    T onEndOfNames(@Nonnull String channel, @Nonnull String message);
 
     /** Callback method for any unknown codes */
-    void onUnknownCode(int code, @Nonnull List<String> arguments);
+    T onUnknownCode(int code, @Nonnull List<String> arguments);
   }
 }

@@ -21,7 +21,7 @@ public class MessageTokenizer {
    * @param line an IRC line to tokenize.
    * @throws IllegalArgumentException if an error occurs in the parsing.
    */
-  public static void tokenize(@Nonnull String line, @Nonnull Callback callback) {
+  public static <T> T tokenize(@Nonnull String line, @Nonnull Callback<T> callback) {
     if (line.isEmpty()) {
       throw new IllegalArgumentException("Empty line cannot be parsed.");
     }
@@ -104,7 +104,7 @@ public class MessageTokenizer {
       }
       arguments.add(trimmed.substring(pos, trimmed.length()));
     }
-    callback.onLineTokenized(tags, prefix, command, arguments);
+    return callback.onLineTokenized(tags, prefix, command, arguments);
   }
 
   private static int indexOfSpaceOrLength(String input, int pos) {
@@ -114,7 +114,7 @@ public class MessageTokenizer {
 
 
   /** Callback class which will be used when parsing is successful */
-  public interface Callback {
+  public interface Callback<T> {
 
     /**
      * Callback method which will invoked when tokenization is successful.
@@ -124,9 +124,9 @@ public class MessageTokenizer {
      * @param prefix prefix as specified by RFC1459.
      * @param arguments the arguments as specified by RFC1459.
      */
-    void onLineTokenized(@Nullable List<String> tags,
-                         @Nullable String prefix,
-                         @Nonnull String command,
-                         @Nonnull List<String> arguments);
+    T onLineTokenized(@Nullable List<String> tags,
+                      @Nullable String prefix,
+                      @Nonnull String command,
+                      @Nonnull List<String> arguments);
   }
 }

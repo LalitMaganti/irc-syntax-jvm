@@ -35,7 +35,7 @@ fun overriding(method: Method): MethodSpec.Builder {
     methodBuilder.addTypeVariable(TypeVariableName.get(typeParameterElement))
   }
 
-  methodBuilder.returns(TypeName.get(method.returnType))
+  methodBuilder.returns(TypeName.get(method.genericReturnType))
 
   for (parameter in method.parameters) {
     val type = TypeName.get(parameter.parameterizedType)
@@ -50,6 +50,48 @@ fun overriding(method: Method): MethodSpec.Builder {
 
   for (thrownType in method.exceptionTypes) {
     methodBuilder.addException(TypeName.get(thrownType))
+  }
+
+  return methodBuilder
+}
+
+fun overriding(method: MethodSpec): MethodSpec.Builder {
+  val modifiers = method.modifiers
+  if (modifiers.contains(Modifier.PRIVATE)
+      || modifiers.contains(Modifier.FINAL)
+      || modifiers.contains(Modifier.STATIC)) {
+    throw IllegalArgumentException("cannot override method with modifiers: " + modifiers)
+  }
+
+  val methodBuilder = MethodSpec.methodBuilder(method.name)
+  methodBuilder.addAnnotation(OVERRIDE)
+  for (annotationSpec in method.annotations) {
+    if (annotationSpec.type == OVERRIDE) continue
+    methodBuilder.addAnnotation(annotationSpec)
+  }
+
+  val modifierSet = LinkedHashSet(method.modifiers)
+  modifierSet.remove(Modifier.ABSTRACT)
+  methodBuilder.addModifiers(modifierSet)
+
+  for (typeParameterElement in method.typeVariables) {
+    methodBuilder.addTypeVariable(typeParameterElement)
+  }
+
+  methodBuilder.returns(method.returnType)
+
+  for (parameter in method.parameters) {
+    val parameterBuilder = ParameterSpec.builder(parameter.type, parameter.name)
+        .addModifiers(*parameter.modifiers.toTypedArray())
+    for (annotationSpec in parameter.annotations) {
+      parameterBuilder.addAnnotation(annotationSpec)
+    }
+    methodBuilder.addParameter(parameterBuilder.build())
+  }
+  methodBuilder.varargs(method.varargs)
+
+  for (thrownType in method.exceptions) {
+    methodBuilder.addException(thrownType)
   }
 
   return methodBuilder

@@ -24,9 +24,10 @@ class TokenizerCallback(klass: Class<*>, private val argumentParser: ClassName) 
       overriding(it)
           .addStatement("this.tags = tags")
           .addStatement("this.prefix = prefix")
-          .addStatement("\$T.parse(command, arguments, this)", argumentParser)
+          .addStatement("T temp = \$T.parse(command, arguments, this)", argumentParser)
           .addStatement("this.tags = null")
           .addStatement("this.prefix = null")
+          .addStatement("return temp")
           .build()
     }
   }
@@ -53,12 +54,13 @@ class ArgumentCallback(klass: Class<*>, private val codeParser: ClassName) : Cal
       if (it.name == "onReply") {
         overriding(it)
             .addStatement("this.target = target")
-            .addStatement("\$T.parse(code, arguments, this)", codeParser)
+            .addStatement("T temp = \$T.parse(code, arguments, this)", codeParser)
             .addStatement("this.target = null")
+            .addStatement("return temp")
             .build()
       } else {
         overriding(it)
-            .addStatement("callback.${it.name}(tags, prefix, ${joinParams(it.parameters)})")
+            .addStatement("return callback.${it.name}(tags, prefix, ${joinParams(it.parameters)})")
             .build()
       }
     }
@@ -84,11 +86,12 @@ class CodeCallback(klass: Class<*>, val nameParser: ClassName) : Callback(klass)
     return methods.map {
       if (it.name == "onNamReply") {
         overriding(it)
-            .addStatement("\$T.parse(arguments, this)", nameParser)
+            .addStatement("return \$T.parse(arguments, this)", nameParser)
             .build()
       } else {
         overriding(it)
-            .addStatement("callback.${it.name}(tags, prefix, target, ${joinParams(it.parameters)})")
+            .addStatement(
+                "return callback.${it.name}(tags, prefix, target, ${joinParams(it.parameters)})")
             .build()
       }
     }
@@ -110,7 +113,8 @@ class NameCallback(klass: Class<*>) : Callback(klass) {
   override fun generateMessageParserMethods(): Iterable<MethodSpec> {
     return methods.map {
       overriding(it)
-          .addStatement("callback.${it.name}(tags, prefix, target, ${joinParams(it.parameters)})")
+          .addStatement(
+              "return callback.${it.name}(tags, prefix, target, ${joinParams(it.parameters)})")
           .build()
     }
   }
@@ -125,6 +129,7 @@ private fun joinParams(params: Array<out Parameter>): String {
 private fun createCanonicalMethodBuilder(it: Method): MethodSpec.Builder {
   return MethodSpec.methodBuilder(it.name)
       .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
+      .returns(TypeVariableName.get("T"))
 }
 
 private fun MethodSpec.Builder.addTokenizerParameters(): MethodSpec.Builder {

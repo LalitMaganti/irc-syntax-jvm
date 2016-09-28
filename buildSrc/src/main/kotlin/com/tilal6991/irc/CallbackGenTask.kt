@@ -12,14 +12,21 @@ import javax.lang.model.element.Modifier
 
 open class CallbackGenTask : SourceTask() {
   private val SLASH = File.separator
+
+  private val canonicalCallbackTypeVariable = TypeVariableName.get("T")
   private val callbackClassName = ClassName.get("com.tilal6991.irc", "MessageCallback")
+  private val parameterizedCallbackName =
+      ParameterizedTypeName.get(callbackClassName, canonicalCallbackTypeVariable)
+  private val abstractClassName = ClassName.get("com.tilal6991.irc", "AbstractMessageCallback")
 
   @TaskAction
   @Suppress("unused", "UNUSED_PARAMETER")
   fun generate(inputs: IncrementalTaskInputs) {
     val container = project.property("sourceSets") as SourceSetContainer
-    val main = container.getByName("main")
-    val classesDir = main.output.classesDir
+    val classesDir = container.getByName("main").output.classesDir
+
+    val projectDir = project.projectDir.absolutePath.removeSuffix("-core")
+    val output = File("$projectDir${SLASH}src${SLASH}main${SLASH}java")
 
     val loader = URLClassLoader.newInstance(
         arrayOf(classesDir.toURI().toURL()), Nonnull::class.java.classLoader)
@@ -35,52 +42,64 @@ open class CallbackGenTask : SourceTask() {
     val tokenizer = TokenizerCallback(
         loader.loadClass(callbackClass("MessageTokenizer")),
         ClassName.get(argument.klass.enclosingClass))
+    val tokenizerName = ClassName.get(tokenizer.klass.enclosingClass)
 
-    val projectDir = project.projectDir.absolutePath.removeSuffix("-core")
-    val output = File("$projectDir${SLASH}src${SLASH}main${SLASH}java")
     val flattenedCallback = generateFlattenedCallback(argument, code, name)
-    flattenedCallback.writeTo(output)
+    JavaFile.builder("com.tilal6991.irc", flattenedCallback).build().writeTo(output)
 
-    val generateNestedParser = generateNestedParser(tokenizer, argument, code, name)
-    generateNestedParser.writeTo(output)
+    val abstractCallback = generateAbstractCallback(flattenedCallback)
+    JavaFile.builder("com.tilal6991.irc", abstractCallback).build().writeTo(output)
+
+    val generateNestedParser = generateParser(tokenizerName, tokenizer, argument, code, name)
+    JavaFile.builder("com.tilal6991.irc", generateNestedParser).build().writeTo(output)
   }
 
-  private fun generateFlattenedCallback(vararg callbacks: Callback): JavaFile {
+  private fun generateAbstractCallback(flattenedCallback: TypeSpec): TypeSpec? {
+    return TypeSpec.classBuilder(abstractClassName)
+        .addModifiers(Modifier.PUBLIC)
+        .addTypeVariable(canonicalCallbackTypeVariable)
+        .addSuperinterface(parameterizedCallbackName)
+        .addMethods(
+            flattenedCallback.methodSpecs.map {
+              overriding(it).addStatement("return null").build()
+            })
+        .build()
+  }
+
+  private fun generateFlattenedCallback(vararg callbacks: Callback): TypeSpec {
     return TypeSpec.interfaceBuilder(callbackClassName)
         .addModifiers(Modifier.PUBLIC)
         .addMethods(
             callbacks.flatMap { it.generateFlattenedCallbackMethods() }
                 .sortedBy { it.name })
-        .build()
-        .run { JavaFile.builder("com.tilal6991.irc", this) }
+        .addTypeVariable(canonicalCallbackTypeVariable)
         .build()
   }
 
-  private fun generateNestedParser(
-      tokenizer: Callback, argument: Callback, code: Callback, name: Callback): JavaFile {
+  private fun generateParser(tokenizer: ClassName, vararg callbacks: Callback): TypeSpec {
     val innerClassName = ClassName.get("com.tilal6991.irc", "MessageParser", "Inner")
-    val inner = innerClass(innerClassName, tokenizer, argument, code, name)
-    return outerClass(inner, innerClassName, tokenizer)
-        .run { JavaFile.builder("com.tilal6991.irc", this) }
+    return outerClass(innerClassName, tokenizer)
+        .addType(innerClass(innerClassName, *callbacks).build())
         .build()
   }
 
-  private fun innerClass(inner: ClassName, vararg callbacks: Callback): TypeSpec {
+  private fun innerClass(inner: ClassName, vararg callbacks: Callback): TypeSpec.Builder {
     return TypeSpec.classBuilder(inner)
-        .addSuperinterfaces(callbacks.map { ClassName.get(it.klass) })
+        .addSuperinterfaces(
+            callbacks.map {
+              ParameterizedTypeName.get(ClassName.get(it.klass), canonicalCallbackTypeVariable)
+            })
         .addModifiers(Modifier.PRIVATE)
         .addField(STRING_LIST_CLASS, "tags", Modifier.PRIVATE)
         .addField(STRING_CLASS, "prefix", Modifier.PRIVATE)
         .addField(STRING_CLASS, "target", Modifier.PRIVATE)
         .addMethods(callbacks.flatMap { it.generateMessageParserMethods() }.sortedBy { it.name })
-        .build()
   }
 
-  private fun outerClass(
-      inner: TypeSpec, innerClassName: ClassName, tokenizer: Callback): TypeSpec? {
+  private fun outerClass(innerClassName: ClassName, tokenizer: ClassName): TypeSpec.Builder {
     val callbackConstructor = MethodSpec.constructorBuilder()
         .addModifiers(Modifier.PUBLIC)
-        .addParameter(ParameterSpec.builder(callbackClassName, "callback")
+        .addParameter(ParameterSpec.builder(parameterizedCallbackName, "callback")
             .addAnnotation(Nonnull::class.java)
             .build())
         .addStatement("this.callback = callback")
@@ -92,17 +111,17 @@ open class CallbackGenTask : SourceTask() {
         .addParameter(ParameterSpec.builder(STRING_CLASS, "line")
             .addAnnotation(Nonnull::class.java)
             .build())
-        .addStatement("\$T.tokenize(line, inner)", tokenizer.klass.enclosingClass)
+        .addStatement("return \$T.tokenize(line, inner)", tokenizer)
+        .returns(canonicalCallbackTypeVariable)
         .build()
 
     return TypeSpec.classBuilder(ClassName.get("com.tilal6991.irc", "MessageParser"))
         .addModifiers(Modifier.PUBLIC)
-        .addField(callbackClassName, "callback", Modifier.PRIVATE, Modifier.FINAL)
+        .addField(parameterizedCallbackName, "callback", Modifier.PRIVATE, Modifier.FINAL)
         .addField(innerClassName, "inner", Modifier.PRIVATE, Modifier.FINAL)
         .addMethod(callbackConstructor)
         .addMethod(parseMethod)
-        .addType(inner)
-        .build()
+        .addTypeVariable(canonicalCallbackTypeVariable)
   }
 
   private fun callbackClass(outer: String): String {

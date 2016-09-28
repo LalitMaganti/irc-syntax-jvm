@@ -19,7 +19,7 @@ public class NamesParser {
    * @param callback the callback to invoke with the parsed arguments.
    * @throws IllegalArgumentException if an error occurs in the parsing.
    */
-  public static void parse(List<String> arguments, Callback callback) {
+  public static <T> T parse(List<String> arguments, Callback<T> callback) {
     // RFC1459 and RFC2812 differ here - account for both cases intelligently.
     if (arguments.size() != 2) {
       throwCountException(2, arguments.size());
@@ -54,7 +54,7 @@ public class NamesParser {
     }
     names.add(namesString.substring(pos, namesString.length()));
 
-    callback.onNames(descriptor, channel, names);
+    return callback.onNames(descriptor, channel, names);
   }
 
   private static void throwCountException(int expected, int actual) {
@@ -67,10 +67,10 @@ public class NamesParser {
   }
 
   /** Callback class which will be invoked when parsing is successful */
-  public interface Callback {
+  public interface Callback<T> {
 
     /** Callback method for names messages. */
-    void onNames(
+    T onNames(
         @Nullable Character channelDescriptor, @Nonnull String channel, @Nonnull List<String> names);
   }
 }

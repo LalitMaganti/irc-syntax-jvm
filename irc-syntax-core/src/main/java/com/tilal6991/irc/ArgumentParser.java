@@ -26,82 +26,66 @@ public class ArgumentParser {
    * @param callback the callback to invoke with the parsed arguments.
    * @throws IllegalArgumentException if an error occurs in the parsing.
    */
-  public static void parse(
-      @Nonnull String command, @Nonnull List<String> arguments, @Nonnull Callback callback) {
+  public static <T> T parse(
+      @Nonnull String command, @Nonnull List<String> arguments, @Nonnull Callback<T> callback) {
     switch (command) {
       case "NICK":
         checkCountOneOf(command, arguments, 1);
-        callback.onNick(arguments.get(0));
-        break;
+        return callback.onNick(arguments.get(0));
       case "QUIT":
         checkCountOneOf(command, arguments, 0, 1);
-        callback.onQuit(getOrNull(arguments, 0));
-        break;
+        return callback.onQuit(getOrNull(arguments, 0));
       case "JOIN":
         checkCountGreaterThanEq(command, arguments, 1);
-        callback.onJoin(arguments.get(0), arguments.subList(1, arguments.size()));
-        break;
+        return callback.onJoin(arguments.get(0), arguments.subList(1, arguments.size()));
       case "PART":
         checkCountOneOf(command, arguments, 1, 2);
-        callback.onPart(arguments.get(0), getOrNull(arguments, 1));
-        break;
+        return callback.onPart(arguments.get(0), getOrNull(arguments, 1));
       case "MODE":
         checkCountGreaterThanEq(command, arguments, 2);
-        callback.onMode(arguments.get(0), arguments.subList(1, arguments.size()));
-        break;
+        return callback.onMode(arguments.get(0), arguments.subList(1, arguments.size()));
       case "INVITE":
         checkCountOneOf(command, arguments, 2);
-        callback.onInvite(arguments.get(0), arguments.get(1));
-        break;
+        return callback.onInvite(arguments.get(0), arguments.get(1));
       case "KICK":
         checkCountOneOf(command, arguments, 2, 3);
-        callback.onKick(arguments.get(0), arguments.get(1), getOrNull(arguments, 2));
-        break;
+        return callback.onKick(arguments.get(0), arguments.get(1), getOrNull(arguments, 2));
       case "AUTHENTICATE":
         checkCountOneOf(command, arguments, 1);
-        callback.onAuthenticate(arguments.get(0));
-        break;
+        return callback.onAuthenticate(arguments.get(0));
       case "ACCOUNT":
         checkCountOneOf(command, arguments, 1);
-        callback.onAccount(arguments.get(0));
-        break;
+        return callback.onAccount(arguments.get(0));
       case "CHGHOST":
         checkCountOneOf(command, arguments, 2);
-        callback.onChghost(arguments.get(0), arguments.get(1));
-        break;
+        return callback.onChghost(arguments.get(0), arguments.get(1));
       case "PRIVMSG":
         checkCountOneOf(command, arguments, 2);
-        callback.onPrivmsg(arguments.get(0), arguments.get(1));
-        break;
+        return callback.onPrivmsg(arguments.get(0), arguments.get(1));
       case "NOTICE":
         checkCountOneOf(command, arguments, 2);
-        callback.onNotice(arguments.get(0), arguments.get(1));
-        break;
+        return callback.onNotice(arguments.get(0), arguments.get(1));
       case "AWAY":
         checkCountOneOf(command, arguments, 0, 1);
-        callback.onAway(getOrNull(arguments, 0));
-        break;
+        return callback.onAway(getOrNull(arguments, 0));
       case "PING":
         checkCountOneOf(command, arguments, 0, 1);
-        callback.onPing(getOrNull(arguments, 0));
-        break;
+        return callback.onPing(getOrNull(arguments, 0));
       case "BATCH":
         checkCountGreaterThanEq(command, arguments, 2);
-        callback.onBatch(arguments.get(0), arguments.get(1), arguments.subList(2, arguments.size()));
-        break;
+        return callback.onBatch(
+            arguments.get(0), arguments.get(1), arguments.subList(2, arguments.size()));
       case "CAP":
         checkCountGreaterThanEq(command, arguments, 1);
-        callback.onCap(arguments);
-        break;
+        return callback.onCap(arguments);
       default:
         int code = parseCode(command);
         if (code == -1) {
-          callback.onUnknownCommand(command, arguments);
+          return callback.onUnknownCommand(command, arguments);
         } else {
           checkCountGreaterThanEq(command, arguments, 1);
-          callback.onReply(code, arguments.get(0), arguments.subList(1, arguments.size()));
+          return callback.onReply(code, arguments.get(0), arguments.subList(1, arguments.size()));
         }
-        break;
     }
   }
 
@@ -150,61 +134,61 @@ public class ArgumentParser {
   }
 
   /** Callback class which will be invoked when parsing is successful */
-  public interface Callback {
+  public interface Callback<T> {
 
     /** Callback method for PING command. */
-    void onPing(@Nullable String hostname);
+    T onPing(@Nullable String hostname);
 
     /** Callback method for QUIT command. */
-    void onQuit(@Nullable String reason);
+    T onQuit(@Nullable String reason);
 
     /** Callback method for JOIN command. */
-    void onJoin(@Nonnull String channel, @Nonnull List<String> arguments);
+    T onJoin(@Nonnull String channel, @Nonnull List<String> arguments);
 
     /** Callback method for a MODE message */
-    void onMode(@Nonnull String target, @Nonnull List<String> arguments);
+    T onMode(@Nonnull String target, @Nonnull List<String> arguments);
 
     /** Callback method for KICK command. */
-    void onKick(@Nonnull String channel, @Nonnull String user, @Nullable String reason);
+    T onKick(@Nonnull String channel, @Nonnull String user, @Nullable String reason);
 
     /** Callback method for NICK command. */
-    void onNick(@Nonnull String nick);
+    T onNick(@Nonnull String nick);
 
     /** Callback method for PART command. */
-    void onPart(@Nonnull String channel, @Nullable String reason);
+    T onPart(@Nonnull String channel, @Nullable String reason);
 
     /** Callback method for AUTHENTICATE command. */
-    void onAuthenticate(@Nonnull String data);
+    T onAuthenticate(@Nonnull String data);
 
     /** Callback method for ACCOUNT command. */
-    void onAccount(@Nullable String account);
+    T onAccount(@Nullable String account);
 
     /** Callback method for CHGHOST command. */
-    void onChghost(@Nonnull String newUser, @Nonnull String newHost);
+    T onChghost(@Nonnull String newUser, @Nonnull String newHost);
 
     /** Callback method for PRIVMSG command. */
-    void onPrivmsg(@Nonnull String target, @Nonnull String message);
+    T onPrivmsg(@Nonnull String target, @Nonnull String message);
 
     /** Callback method for NOTICE command. */
-    void onNotice(@Nonnull String target, @Nonnull String message);
+    T onNotice(@Nonnull String target, @Nonnull String message);
 
     /** Callback method for INVITE command. */
-    void onInvite(@Nonnull String target, @Nonnull String channel);
+    T onInvite(@Nonnull String target, @Nonnull String channel);
 
     /** Callback method for AWAY command. */
-    void onAway(@Nullable String message);
+    T onAway(@Nullable String message);
 
     /** Callback method for BATCH command. */
-    void onBatch(
+    T onBatch(
         @Nonnull String modifiedReferenceTag, @Nonnull String type, @Nonnull List<String> arguments);
 
     /** Callback method for CAP command. */
-    void onCap(@Nonnull List<String> args);
+    T onCap(@Nonnull List<String> args);
 
     /** Callback method for a reply message. */
-    void onReply(int code, @Nonnull String target, @Nonnull List<String> arguments);
+    T onReply(int code, @Nonnull String target, @Nonnull List<String> arguments);
 
     /** Callback method for unknown command */
-    void onUnknownCommand(@Nonnull String command, @Nonnull List<String> arguments);
+    T onUnknownCommand(@Nonnull String command, @Nonnull List<String> arguments);
   }
 }
