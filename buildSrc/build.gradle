@@ -1,0 +1,25 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1' }
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1-M01"
+    }
+}
+
+apply plugin: 'kotlin'
+apply from: rootProject.file('../dependencies.gradle')
+
+repositories {
+    jcenter()
+    maven { url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1' }
+}
+
+dependencies {
+    compile gradleApi()
+    compile 'com.google.code.findbugs:findbugs:3.0.1'
+    compile rootProject.ext.javaParser
+    compile rootProject.ext.javaPoet
+    compile rootProject.ext.kotlinStdlib
+}

@@ -114,7 +114,7 @@ public class MessageTokenizer {
 
 
   /** Callback class which will be used when parsing is successful */
-  interface Callback {
+  public interface Callback {
 
     /**
      * Callback method which will invoked when tokenization is successful.

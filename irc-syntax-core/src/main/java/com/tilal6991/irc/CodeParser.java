@@ -1,11 +1,9 @@
 package com.tilal6991.irc;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /** Parser which considers a list of IRC code arguments and interprets them. */
 public class CodeParser {
@@ -28,53 +26,55 @@ public class CodeParser {
   public static void parse(int code, @Nonnull List<String> arguments, @Nonnull Callback callback) {
     switch (code) {
       case RPL_WELCOME:
-        checkCountOneOf(code, arguments, 1);
+        checkCountIs(code, arguments, 1);
         callback.onWelcome(arguments.get(0));
         break;
       case RPL_ISUPPORT:
-        checkCountOneOf(code, arguments, 2);
+        checkCountIs(code, arguments, 2);
         callback.onIsupport(
-            arguments.subList(0, arguments.size() - 1), arguments.get(arguments.size() - 1));
+            arguments.get(arguments.size() - 1), arguments.subList(0, arguments.size() - 1));
         break;
       case RPL_NAMREPLY:
-        callback.onNames(arguments);
+        callback.onNamReply(arguments);
         break;
       case RPL_ENDOFNAMES:
-        checkCountOneOf(code, arguments, 2);
+        checkCountIs(code, arguments, 2);
         callback.onEndOfNames(arguments.get(0), arguments.get(1));
         break;
       default:
-        throw new IllegalArgumentException(
-            String.format(Locale.getDefault(), "Unknown code provided: %d", code));
+        callback.onUnknownCode(code, arguments);
+        break;
     }
   }
 
-  private static void checkCountOneOf(int code, List<String> arguments, int... counts) {
-    int index = Arrays.binarySearch(counts, arguments.size());
-    if (index < 0) {
+  private static void checkCountIs(int code, List<String> arguments, int counts) {
+    if (arguments.size() != counts) {
       throw new IllegalArgumentException(
           String.format(
               Locale.getDefault(),
               "Code: %d. Expected argument count: %s. Actual argument count: %d.",
               code,
-              Arrays.toString(counts),
+              counts,
               arguments.size()));
     }
   }
 
   /** Callback class which will be invoked when parsing is successful */
-  interface Callback {
+  public interface Callback {
 
     /** Callback method for RPL_WELCOME code. */
     void onWelcome(@Nonnull String message);
 
     /** Callback method for RPL_ISUPPORT code. */
-    void onIsupport(@Nonnull List<String> tokens, @Nonnull String s);
+    void onIsupport(@Nonnull String message, @Nonnull List<String> tokens);
 
     /** Callback method for RPL_NAMREPLY code. */
-    void onNames(@Nullable List<String> arguments);
+    void onNamReply(@Nonnull List<String> arguments);
 
     /** Callback method for RPL_ENDOFNAMES code. */
     void onEndOfNames(@Nonnull String channel, @Nonnull String message);
+
+    /** Callback method for any unknown codes */
+    void onUnknownCode(int code, @Nonnull List<String> arguments);
   }
 }

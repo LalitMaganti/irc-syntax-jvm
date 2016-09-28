@@ -87,14 +87,7 @@ public class ArgumentParser {
         break;
       case "BATCH":
         checkCountGreaterThanEq(command, arguments, 2);
-        if (arguments.get(0).length() < 2) {
-          throw new IllegalArgumentException("Reference tag for batch not present");
-        }
-        callback.onBatch(
-            arguments.get(0).charAt(0),
-            arguments.get(0).substring(1),
-            arguments.get(1),
-            arguments.subList(2, arguments.size()));
+        callback.onBatch(arguments.get(0), arguments.get(1), arguments.subList(2, arguments.size()));
         break;
       case "CAP":
         checkCountGreaterThanEq(command, arguments, 1);
@@ -103,10 +96,11 @@ public class ArgumentParser {
       default:
         int code = parseCode(command);
         if (code == -1) {
-          throw new IllegalArgumentException(String.format("Unknown command %s.", command));
+          callback.onUnknownCommand(command, arguments);
+        } else {
+          checkCountGreaterThanEq(command, arguments, 1);
+          callback.onReply(code, arguments.get(0), arguments.subList(1, arguments.size()));
         }
-        checkCountGreaterThanEq(command, arguments, 1);
-        callback.onReply(code, arguments.get(0), arguments.subList(1, arguments.size()));
         break;
     }
   }
@@ -156,7 +150,7 @@ public class ArgumentParser {
   }
 
   /** Callback class which will be invoked when parsing is successful */
-  interface Callback {
+  public interface Callback {
 
     /** Callback method for PING command. */
     void onPing(@Nullable String hostname);
@@ -165,10 +159,10 @@ public class ArgumentParser {
     void onQuit(@Nullable String reason);
 
     /** Callback method for JOIN command. */
-    void onJoin(@Nonnull String channel, @Nonnull List<String> args);
+    void onJoin(@Nonnull String channel, @Nonnull List<String> arguments);
 
     /** Callback method for a MODE message */
-    void onMode(@Nonnull String target, @Nonnull List<String> args);
+    void onMode(@Nonnull String target, @Nonnull List<String> arguments);
 
     /** Callback method for KICK command. */
     void onKick(@Nonnull String channel, @Nonnull String user, @Nullable String reason);
@@ -202,15 +196,15 @@ public class ArgumentParser {
 
     /** Callback method for BATCH command. */
     void onBatch(
-        char referenceModifier,
-        @Nonnull String referenceTag,
-        @Nonnull String type,
-        @Nonnull List<String> args);
+        @Nonnull String modifiedReferenceTag, @Nonnull String type, @Nonnull List<String> arguments);
 
     /** Callback method for CAP command. */
     void onCap(@Nonnull List<String> args);
 
     /** Callback method for a reply message. */
-    void onReply(int code, @Nonnull String target, @Nonnull List<String> args);
+    void onReply(int code, @Nonnull String target, @Nonnull List<String> arguments);
+
+    /** Callback method for unknown command */
+    void onUnknownCommand(@Nonnull String command, @Nonnull List<String> arguments);
   }
 }

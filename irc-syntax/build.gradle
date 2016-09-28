@@ -1,0 +1,14 @@
+apply plugin: 'java'
+
+sourceCompatibility = JavaVersion.VERSION_1_7
+targetCompatibility = JavaVersion.VERSION_1_7
+
+dependencies {
+    compile project(':irc-syntax-core')
+    compile 'com.google.code.findbugs:findbugs:3.0.1'
+
+    testCompile rootProject.ext.kotlinStdlib
+    testCompile rootProject.ext.junit
+    testCompile rootProject.ext.mockito
+    testCompile rootProject.ext.assertj
+}

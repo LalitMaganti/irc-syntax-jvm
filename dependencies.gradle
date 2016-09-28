@@ -1,0 +1,12 @@
+ext {
+    kotlinVersion = '1.1-M01'
+    kotlinPlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    kotlinStdlib = "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+
+    javaParser = 'com.github.javaparser:javaparser-core:2.1.0'
+    javaPoet = 'com.squareup:javapoet:1.7.0'
+
+    junit = 'junit:junit:4.12'
+    assertj = 'org.assertj:assertj-core:2.4.1'
+    mockito = 'org.mockito:mockito-core:2.0.52-beta'
+}
