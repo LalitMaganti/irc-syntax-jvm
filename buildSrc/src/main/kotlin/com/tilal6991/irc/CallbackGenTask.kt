@@ -69,7 +69,7 @@ open class CallbackGenTask : SourceTask() {
         .addMethods(
             flattenedCallback.methodSpecs.map {
               val params = it.parameters.map { it.name }.joinToString(", ")
-              overridingSpec(it)
+              overriding(it)
                   .returns(messageClassName)
                   .addStatement("return new Message.${it.name.removePrefix("on")}($params)")
                   .build()
@@ -84,7 +84,7 @@ open class CallbackGenTask : SourceTask() {
         .addSuperinterface(parameterizedCallbackName)
         .addMethods(
             flattenedCallback.methodSpecs.map {
-              overridingSpec(it).addStatement("return null").build()
+              overriding(it).addStatement("return null").build()
             })
         .build()
   }

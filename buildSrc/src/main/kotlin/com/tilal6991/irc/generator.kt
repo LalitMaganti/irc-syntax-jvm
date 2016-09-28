@@ -26,7 +26,7 @@ class TokenizerGenerator(callbackClass: Class<*>,
 
   override fun parserMethods(): Iterable<MethodSpec> {
     return callbackMethods.map {
-      overridingReflect(it)
+      overriding(it)
           .addTokenizerAssignment()
           .addStatement("T temp = \$T.parse(command, arguments, this)", argumentParser)
           .addStatement("this.tags = null")
@@ -61,14 +61,14 @@ class ArgumentGenerator(callbackClass: Class<*>,
   override fun parserMethods(): Iterable<MethodSpec> {
     return callbackMethods.map {
       if (it.name == "onReply") {
-        overridingReflect(it)
+        overriding(it)
             .addStatement("this.target = target")
             .addStatement("T temp = \$T.parse(code, arguments, this)", codeParser)
             .addStatement("this.target = null")
             .addStatement("return temp")
             .build()
       } else {
-        overridingReflect(it)
+        overriding(it)
             .addStatement("return callback.${it.name}(tags, prefix, ${joinParams(it.parameters)})")
             .build()
       }
@@ -125,7 +125,7 @@ class CodeGenerator(callbackClass: Class<*>, val nameParser: ClassName) : Genera
   override fun parserMethods(): Iterable<MethodSpec> {
     return callbackMethods.map {
       if (it.name == "onNamReply") {
-        overridingReflect(it)
+        overriding(it)
             .addStatement("return \$T.parse(arguments, this)", nameParser)
             .build()
       } else {
@@ -155,7 +155,7 @@ class NameGenerator(callbackClass: Class<*>) : Generator(callbackClass) {
 
   override fun parserMethods(): Iterable<MethodSpec> {
     return callbackMethods.map {
-      overridingReflect(it)
+      overriding(it)
           .addStatement(
               "return callback.${it.name}(tags, prefix, target, ${joinParams(it.parameters)})")
           .build()
@@ -180,7 +180,7 @@ private fun createCanonicalMethodBuilder(it: Method): MethodSpec.Builder {
 }
 
 private fun generateCodeParserMethodFromCallbackMethod(it: Method): MethodSpec {
-  return overridingReflect(it)
+  return overriding(it)
       .addStatement(
           "return callback.${it.name}(tags, prefix, target, ${joinParams(it.parameters)})")
       .build()

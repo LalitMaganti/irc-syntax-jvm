@@ -11,7 +11,7 @@ val STRING_CLASS = ClassName.get(String::class.java)!!
 val STRING_LIST_CLASS = ParameterizedTypeName.get(LIST_CLASS, STRING_CLASS)!!
 
 private val OVERRIDE = ClassName.get(Override::class.java)
-fun overridingReflect(method: Method): MethodSpec.Builder {
+fun overriding(method: Method): MethodSpec.Builder {
   val modifiers = method.modifiers
   if (isPrivate(modifiers)
       || isFinal(modifiers)
@@ -55,7 +55,7 @@ fun overridingReflect(method: Method): MethodSpec.Builder {
   return methodBuilder
 }
 
-fun overridingSpec(method: MethodSpec): MethodSpec.Builder {
+fun overriding(method: MethodSpec): MethodSpec.Builder {
   val modifiers = method.modifiers
   if (modifiers.contains(Modifier.PRIVATE)
       || modifiers.contains(Modifier.FINAL)
