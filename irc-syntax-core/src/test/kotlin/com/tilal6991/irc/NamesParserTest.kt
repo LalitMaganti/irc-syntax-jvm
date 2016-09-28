@@ -1,9 +1,11 @@
 package com.tilal6991.irc
 
+import org.assertj.core.api.Assertions
 import org.junit.Assert.fail
 import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
+import java.lang.reflect.Modifier
 
 class NamesParserTest {
 
@@ -37,6 +39,13 @@ class NamesParserTest {
 
     parse(listOf("$", "channel", "first +second +third"))
     verify(callback).onNames('$', "channel", listOf("first", "+second", "+third"))
+  }
+
+  @Test fun testConstructorIsPrivate() {
+    val constructor = NamesParser::class.java.getDeclaredConstructor()
+    Assertions.assertThat(Modifier.isPrivate(constructor.modifiers)).isTrue()
+    constructor.isAccessible = true
+    constructor.newInstance()
   }
 
   private fun verifyTooMany(arguments: List<String>) {

@@ -10,6 +10,10 @@ import javax.annotation.Nullable;
 /** Parser which considers a list of RPL_NAMREPLY arguments and interprets them. */
 public class NamesParser {
 
+  // No instances of parser.
+  private NamesParser() {
+  }
+
   /**
    * Parses RPL_NAMREPLY message arguments. Checks that the correct number of arguments are present
    * for the given command and invokes the given callback synchronously with the parsed arguments if

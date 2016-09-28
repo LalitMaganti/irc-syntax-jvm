@@ -1,9 +1,11 @@
 package com.tilal6991.irc
 
+import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.fail
 import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
+import java.lang.reflect.Modifier
 
 class CodeParserTest {
   private val callback = mock(CodeParser.Callback::class.java)
@@ -52,6 +54,13 @@ class CodeParserTest {
     verify(callback).onEndOfNames("channel", "message")
 
     verifyTooMany(366, threeItemList())
+  }
+
+  @Test fun testConstructorIsPrivate() {
+    val constructor = CodeParser::class.java.getDeclaredConstructor()
+    Assertions.assertThat(Modifier.isPrivate(constructor.modifiers)).isTrue()
+    constructor.isAccessible = true
+    constructor.newInstance()
   }
 
   private fun verifyTooMany(code: Int, arguments: List<String>) {

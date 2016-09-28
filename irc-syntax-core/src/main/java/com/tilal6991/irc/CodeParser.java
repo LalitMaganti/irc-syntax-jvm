@@ -13,6 +13,10 @@ public class CodeParser {
   private static final int RPL_NAMREPLY = 353;
   private static final int RPL_ENDOFNAMES = 366;
 
+  // No instances of parser.
+  private CodeParser() {
+  }
+
   /**
    * Parses reply message arguments. Checks that the correct number of arguments are present for the
    * given command and invokes the given callback synchronously with the parsed arguments if parsing
