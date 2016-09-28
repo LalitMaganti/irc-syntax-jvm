@@ -14,7 +14,6 @@ class NamesParserTest {
   @Test fun testInvalid() {
     verifyTooFew(emptyList())
     verifyTooFew(oneItemList())
-    verifyTooMany(fourIemList())
 
     try {
       parse(listOf("#", "first +second +third"))
@@ -22,8 +21,9 @@ class NamesParserTest {
     } catch (ex: IllegalArgumentException) {
       // Don't bother checking exact message.
     }
+    verifyTooMany(listOf("c", "first", "second", "third"))
+    verifyTooMany(threeItemList())
   }
-
 
   @Test fun test1459() {
     parse(listOf("channel", "first"))
