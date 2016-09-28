@@ -25,7 +25,7 @@ class ArgumentParserTest {
     parse("PING", listOf("a.server.com"))
     verify(callback).onPing("a.server.com")
 
-    verifyTooMany("PING", listOf("first", "second"))
+    verifyTooMany("PING", twoItemList())
   }
 
   @Test fun testQuit() {
@@ -35,7 +35,7 @@ class ArgumentParserTest {
     parse("QUIT", listOf("reason"))
     verify(callback).onQuit("reason")
 
-    verifyTooMany("QUIT", listOf("first", "second"))
+    verifyTooMany("QUIT", twoItemList())
   }
 
   @Test fun testNick() {
@@ -44,7 +44,7 @@ class ArgumentParserTest {
     parse("NICK", listOf("newnick"))
     verify(callback).onNick("newnick")
 
-    verifyTooMany("NICK", listOf("first", "second"))
+    verifyTooMany("NICK", twoItemList())
   }
 
   @Test fun testInvite() {
@@ -54,7 +54,7 @@ class ArgumentParserTest {
     parse("INVITE", listOf("target", "channel"))
     verify(callback).onInvite("target", "channel")
 
-    verifyTooMany("INVITE", listOf("first", "second", "third"))
+    verifyTooMany("INVITE", threeItemList())
   }
 
   @Test fun testAccount() {
@@ -63,7 +63,7 @@ class ArgumentParserTest {
     parse("ACCOUNT", listOf("account"))
     verify(callback).onAccount("account")
 
-    verifyTooMany("ACCOUNT", listOf("first", "second"))
+    verifyTooMany("ACCOUNT", twoItemList())
   }
 
   @Test fun testAuthenticate() {
@@ -72,7 +72,7 @@ class ArgumentParserTest {
     parse("AUTHENTICATE", listOf("data"))
     verify(callback).onAuthenticate("data")
 
-    verifyTooMany("AUTHENTICATE", listOf("first", "second"))
+    verifyTooMany("AUTHENTICATE", twoItemList())
   }
 
   @Test fun testPart() {
@@ -84,7 +84,7 @@ class ArgumentParserTest {
     parse("PART", listOf("channel", "reason"))
     verify(callback).onPart("channel", "reason")
 
-    verifyTooMany("NICK", listOf("first", "second", "third"))
+    verifyTooMany("NICK", threeItemList())
   }
 
   @Test fun testPrivmsg() {
@@ -94,7 +94,7 @@ class ArgumentParserTest {
     parse("PRIVMSG", listOf("target", "reason"))
     verify(callback).onPrivmsg("target", "reason")
 
-    verifyTooMany("PRIVMSG", listOf("first", "second", "third"))
+    verifyTooMany("PRIVMSG", threeItemList())
   }
 
   @Test fun testNotice() {
@@ -104,7 +104,7 @@ class ArgumentParserTest {
     parse("NOTICE", listOf("target", "reason"))
     verify(callback).onNotice("target", "reason")
 
-    verifyTooMany("NOTICE", listOf("first", "second", "third"))
+    verifyTooMany("NOTICE", threeItemList())
   }
 
   @Test fun testJoin() {
@@ -142,7 +142,7 @@ class ArgumentParserTest {
     parse("KICK", listOf("channel", "target", "reason"))
     verify(callback).onKick("channel", "target", "reason")
 
-    verifyTooMany("KICK", listOf("first", "second", "third", "fourth"))
+    verifyTooMany("KICK", fourIemList())
   }
 
   @Test fun testChghost() {
@@ -152,7 +152,7 @@ class ArgumentParserTest {
     parse("CHGHOST", listOf("newuser", "newhost"))
     verify(callback).onChghost("newuser", "newhost")
 
-    verifyTooMany("CHGHOST", listOf("first", "second", "third"))
+    verifyTooMany("CHGHOST", threeItemList())
   }
 
   @Test fun testAway() {
@@ -170,7 +170,7 @@ class ArgumentParserTest {
     verifyTooFew("BATCH", listOf("first"))
 
     parse("BATCH", listOf("+subcommand", "type", "first", "second"))
-    verify(callback).onBatch("+subcommand", "type", listOf("first", "second"))
+    verify(callback).onBatch("+subcommand", "type", twoItemList())
   }
 
   @Test fun testReply() {

@@ -30,7 +30,7 @@ public class CodeParser {
         checkCountIs(code, arguments, 1);
         return callback.onWelcome(arguments.get(0));
       case RPL_ISUPPORT:
-        checkCountIs(code, arguments, 2);
+        checkCountIsGeq(code, arguments, 2);
         return callback.onIsupport(
             arguments.get(arguments.size() - 1), arguments.subList(0, arguments.size() - 1));
       case RPL_NAMREPLY:
@@ -43,15 +43,27 @@ public class CodeParser {
     }
   }
 
-  private static void checkCountIs(int code, List<String> arguments, int counts) {
-    if (arguments.size() != counts) {
+  private static void checkCountIs(int code, List<String> arguments, int count) {
+    if (arguments.size() != count) {
       throw new IllegalArgumentException(
           String.format(
               Locale.getDefault(),
               "Code: %d. Expected argument count: %s. Actual argument count: %d.",
               code,
-              counts,
+              count,
               arguments.size()));
+    }
+  }
+
+  private static void checkCountIsGeq(int code, List<String> arguments, int count) {
+    if (arguments.size() < count) {
+      throw new IllegalArgumentException(
+              String.format(
+                      Locale.getDefault(),
+                      "Code: %d. Expected argument count geq: %s. Actual argument count: %d.",
+                      code,
+                      count,
+                      arguments.size()));
     }
   }
 
