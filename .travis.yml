@@ -8,5 +8,4 @@ env:
 
 after_success:
   - ./gradlew jacocoTestReport
-  - bash <(curl -s https://codecov.io/bash) -t 20828cff-b4cf-4f8b-a216-2a9fae95b383
-
+  - bash <(curl -s https://codecov.io/bash)
