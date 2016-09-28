@@ -8,6 +8,14 @@ import org.mockito.Mockito.verify
 class CodeParserTest {
   private val callback = mock(CodeParser.Callback::class.java)
 
+  @Test fun testInvalid() {
+    parse(999, emptyList())
+    verify(callback).onUnknownCode(999, emptyList())
+
+    parse(998, fourIemList())
+    verify(callback).onUnknownCode(998, fourIemList())
+  }
+
   @Test fun testWelcome() {
     verifyTooFew(1, emptyList())
 
