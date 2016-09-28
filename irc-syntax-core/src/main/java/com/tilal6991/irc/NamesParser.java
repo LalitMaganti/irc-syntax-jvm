@@ -21,7 +21,7 @@ public class NamesParser {
    */
   public static <T> T parse(List<String> arguments, Callback<T> callback) {
     // RFC1459 and RFC2812 differ here - account for both cases intelligently.
-    if (arguments.size() != 2) {
+    if (arguments.size() < 2) {
       throwCountException(2, arguments.size());
     }
 
@@ -33,12 +33,16 @@ public class NamesParser {
       descriptor = first.charAt(0);
       offset = 1;
 
-      if (arguments.size() < 3) {
+      if (arguments.size() != 3) {
         throwCountException(3, arguments.size());
       }
     } else {
       descriptor = null;
       offset = 0;
+
+      if (arguments.size() != 2) {
+        throwCountException(3, arguments.size());
+      }
     }
 
     String channel = arguments.get(offset);
