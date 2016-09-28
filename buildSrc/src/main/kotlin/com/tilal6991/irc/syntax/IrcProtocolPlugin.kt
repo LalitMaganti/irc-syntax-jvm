@@ -1,4 +1,4 @@
-package com.tilal6991.irc
+package com.tilal6991.irc.syntax
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project

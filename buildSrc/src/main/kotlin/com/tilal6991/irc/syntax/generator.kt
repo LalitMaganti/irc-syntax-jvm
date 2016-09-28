@@ -1,4 +1,4 @@
-package com.tilal6991.irc
+package com.tilal6991.irc.syntax
 
 import com.squareup.javapoet.*
 import java.lang.reflect.Method
@@ -7,8 +7,9 @@ import javax.annotation.Nonnull
 import javax.annotation.Nullable
 import javax.lang.model.element.Modifier
 
-val messageClassName = ClassName.get("com.tilal6991.irc", "Message")!!
-val replyMessageClassName = ClassName.get("com.tilal6991.irc", "Message", "Reply")!!
+val outputPackage = "com.tilal6991.irc.syntax"
+val messageClassName = ClassName.get(outputPackage, "Message")!!
+val replyMessageClassName = ClassName.get(outputPackage, "Message", "Reply")!!
 
 abstract class Generator(val klass: Class<*>) {
   protected val callbackMethods: List<Method> = klass.declaredMethods.toList()

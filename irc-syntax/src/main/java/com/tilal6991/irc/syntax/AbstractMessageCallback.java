@@ -1,4 +1,4 @@
-package com.tilal6991.irc;
+package com.tilal6991.irc.syntax;
 
 import java.lang.Character;
 import java.lang.Override;

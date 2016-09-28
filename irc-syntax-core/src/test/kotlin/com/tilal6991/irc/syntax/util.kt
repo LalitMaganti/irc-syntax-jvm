@@ -1,4 +1,4 @@
-package com.tilal6991.irc
+package com.tilal6991.irc.syntax
 
 fun oneItemList() = listOf("first")
 fun twoItemList() = listOf("first", "second")

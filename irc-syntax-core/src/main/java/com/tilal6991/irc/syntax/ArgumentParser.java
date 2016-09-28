@@ -1,4 +1,4 @@
-package com.tilal6991.irc;
+package com.tilal6991.irc.syntax;
 
 import java.util.Arrays;
 import java.util.List;
@@ -6,8 +6,6 @@ import java.util.Locale;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import static com.tilal6991.irc.Utils.getOrNull;
 
 /** Parser which considers a list of IRC message arguments and interprets them. */
 public class ArgumentParser {
@@ -34,13 +32,13 @@ public class ArgumentParser {
         return callback.onNick(arguments.get(0));
       case "QUIT":
         checkCountOneOf(command, arguments, 0, 1);
-        return callback.onQuit(getOrNull(arguments, 0));
+        return callback.onQuit(Utils.getOrNull(arguments, 0));
       case "JOIN":
         checkCountGreaterThanEq(command, arguments, 1);
         return callback.onJoin(arguments.get(0), arguments.subList(1, arguments.size()));
       case "PART":
         checkCountOneOf(command, arguments, 1, 2);
-        return callback.onPart(arguments.get(0), getOrNull(arguments, 1));
+        return callback.onPart(arguments.get(0), Utils.getOrNull(arguments, 1));
       case "MODE":
         checkCountGreaterThanEq(command, arguments, 2);
         return callback.onMode(arguments.get(0), arguments.subList(1, arguments.size()));
@@ -49,7 +47,7 @@ public class ArgumentParser {
         return callback.onInvite(arguments.get(0), arguments.get(1));
       case "KICK":
         checkCountOneOf(command, arguments, 2, 3);
-        return callback.onKick(arguments.get(0), arguments.get(1), getOrNull(arguments, 2));
+        return callback.onKick(arguments.get(0), arguments.get(1), Utils.getOrNull(arguments, 2));
       case "AUTHENTICATE":
         checkCountOneOf(command, arguments, 1);
         return callback.onAuthenticate(arguments.get(0));
@@ -67,10 +65,10 @@ public class ArgumentParser {
         return callback.onNotice(arguments.get(0), arguments.get(1));
       case "AWAY":
         checkCountOneOf(command, arguments, 0, 1);
-        return callback.onAway(getOrNull(arguments, 0));
+        return callback.onAway(Utils.getOrNull(arguments, 0));
       case "PING":
         checkCountOneOf(command, arguments, 0, 1);
-        return callback.onPing(getOrNull(arguments, 0));
+        return callback.onPing(Utils.getOrNull(arguments, 0));
       case "BATCH":
         checkCountGreaterThanEq(command, arguments, 2);
         return callback.onBatch(

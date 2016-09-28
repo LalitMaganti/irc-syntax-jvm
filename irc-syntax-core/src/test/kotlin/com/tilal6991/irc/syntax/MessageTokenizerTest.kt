@@ -1,4 +1,4 @@
-package com.tilal6991.irc
+package com.tilal6991.irc.syntax
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert.fail

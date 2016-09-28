@@ -1,5 +1,6 @@
-package com.tilal6991.irc
+package com.tilal6991.irc.syntax
 
+import com.tilal6991.irc.syntax.CodeParser
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.fail
 import org.junit.Test

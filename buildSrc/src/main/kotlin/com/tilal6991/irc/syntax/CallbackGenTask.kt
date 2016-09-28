@@ -1,4 +1,4 @@
-package com.tilal6991.irc
+package com.tilal6991.irc.syntax
 
 import com.squareup.javapoet.*
 import org.gradle.api.tasks.SourceSetContainer
@@ -13,9 +13,9 @@ import javax.lang.model.element.Modifier
 open class CallbackGenTask : SourceTask() {
   private val SLASH = File.separator
 
-  private val callbackClassName = ClassName.get("com.tilal6991.irc", "MessageCallback")
-  private val abstractClassName = ClassName.get("com.tilal6991.irc", "AbstractMessageCallback")
-  private val pojoCallbackClassName = ClassName.get("com.tilal6991.irc", "PojoMessageCallback")
+  private val callbackClassName = ClassName.get(outputPackage, "MessageCallback")
+  private val abstractClassName = ClassName.get(outputPackage, "AbstractMessageCallback")
+  private val pojoCallbackClassName = ClassName.get(outputPackage, "PojoMessageCallback")
 
   private val canonicalCallbackTypeVariable = TypeVariableName.get("T")
   private val parameterizedCallbackName =
@@ -47,19 +47,19 @@ open class CallbackGenTask : SourceTask() {
     val tokenizerName = ClassName.get(tokenizer.klass.enclosingClass)
 
     val flattenedCallback = generateFlattenedCallback(argument, code, name)
-    JavaFile.builder("com.tilal6991.irc", flattenedCallback).build().writeTo(output)
+    JavaFile.builder(outputPackage, flattenedCallback).build().writeTo(output)
 
     val abstractCallback = generateAbstractCallback(flattenedCallback)
-    JavaFile.builder("com.tilal6991.irc", abstractCallback).build().writeTo(output)
+    JavaFile.builder(outputPackage, abstractCallback).build().writeTo(output)
 
     val message = generateMessageClasses(tokenizer, argument, code, name)
-    JavaFile.builder("com.tilal6991.irc", message).build().writeTo(output)
+    JavaFile.builder(outputPackage, message).build().writeTo(output)
 
     val pojo = generatePojoCallback(flattenedCallback)
-    JavaFile.builder("com.tilal6991.irc", pojo).build().writeTo(output)
+    JavaFile.builder(outputPackage, pojo).build().writeTo(output)
 
     val parser = generateParser(tokenizerName, tokenizer, argument, code, name)
-    JavaFile.builder("com.tilal6991.irc", parser).build().writeTo(output)
+    JavaFile.builder(outputPackage, parser).build().writeTo(output)
   }
 
   private fun generatePojoCallback(flattenedCallback: TypeSpec): TypeSpec? {
@@ -115,7 +115,7 @@ open class CallbackGenTask : SourceTask() {
   }
 
   private fun generateParser(tokenizer: ClassName, vararg generators: Generator): TypeSpec {
-    val innerClassName = ClassName.get("com.tilal6991.irc", "MessageParser", "Inner")
+    val innerClassName = ClassName.get(outputPackage, "MessageParser", "Inner")
     return outerParserClass(innerClassName, tokenizer)
         .addType(innerParserClass(innerClassName, *generators).build())
         .build()
@@ -153,7 +153,7 @@ open class CallbackGenTask : SourceTask() {
         .returns(canonicalCallbackTypeVariable)
         .build()
 
-    return TypeSpec.classBuilder(ClassName.get("com.tilal6991.irc", "MessageParser"))
+    return TypeSpec.classBuilder(ClassName.get(outputPackage, "MessageParser"))
         .addModifiers(Modifier.PUBLIC)
         .addField(parameterizedCallbackName, "callback", Modifier.PRIVATE, Modifier.FINAL)
         .addField(innerClassName, "inner", Modifier.PRIVATE, Modifier.FINAL)
@@ -163,6 +163,6 @@ open class CallbackGenTask : SourceTask() {
   }
 
   private fun callbackClass(outer: String): String {
-    return "com.tilal6991.irc.$outer\$Callback"
+    return outputPackage + ".$outer\$Callback"
   }
 }

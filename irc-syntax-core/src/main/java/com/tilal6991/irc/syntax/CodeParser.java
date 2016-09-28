@@ -1,4 +1,4 @@
-package com.tilal6991.irc;
+package com.tilal6991.irc.syntax;
 
 import java.util.List;
 import java.util.Locale;
