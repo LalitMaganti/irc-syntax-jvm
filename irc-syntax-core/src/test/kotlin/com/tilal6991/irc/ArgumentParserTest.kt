@@ -11,19 +11,11 @@ class ArgumentParserTest {
   private val callback = mock(ArgumentParser.Callback::class.java)
 
   @Test fun testInvalid() {
-    try {
-      parse("COMMAND", emptyList())
-      fail("Illegal command accepted")
-    } catch (ex: IllegalArgumentException) {
-      // Don't bother checking the message.
-    }
+    parse("COMMAND", emptyList())
+    verify(callback).onUnknownCommand("COMMAND", emptyList())
 
-    try {
-      parse("12m", emptyList())
-      fail("Illegal command accepted")
-    } catch (ex: IllegalArgumentException) {
-      // Don't bother checking the message.
-    }
+    parse("12m", emptyList())
+    verify(callback).onUnknownCommand("COMMAND", emptyList())
   }
 
   @Test fun testPing() {
@@ -177,15 +169,8 @@ class ArgumentParserTest {
     verifyTooFew("BATCH", emptyList())
     verifyTooFew("BATCH", listOf("first"))
 
-    try {
-      parse("BATCH", listOf("+", "type", "first", "second"))
-      fail("Illegal reference tag accepted")
-    } catch (ex: IllegalArgumentException) {
-      // Don't bother checking the message.
-    }
-
     parse("BATCH", listOf("+subcommand", "type", "first", "second"))
-    verify(callback).onBatch('+', "subcommand", "type", listOf("first", "second"))
+    verify(callback).onBatch("+subcommand", "type", listOf("first", "second"))
   }
 
   @Test fun testReply() {
