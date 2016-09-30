@@ -1,8 +1,12 @@
 package com.tilal6991.irc.syntax
 
+import org.assertj.core.api.Assertions
+import org.junit.Assert
+import org.junit.Assert.fail
 import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
+import java.lang.reflect.Modifier
 
 class ClientCapParserTest {
   private val callback = mock(ClientCapParser.Callback::class.java)
@@ -32,6 +36,7 @@ class ClientCapParserTest {
     ClientCapParser.parse(listOf("*", "LS", "*", "first second third"), callback)
     verify(callback).onCapLs("*", false, listOf("first", "second", "third"))
 
+    expectIae { ClientCapParser.parse(listOf("*", "LS", "*"), callback) }
     expectIae { ClientCapParser.parse(listOf("*", "LS", "first", "second"), callback) }
   }
 
@@ -48,6 +53,7 @@ class ClientCapParserTest {
     ClientCapParser.parse(listOf("*", "LIST", "*", "first second third"), callback)
     verify(callback).onCapList("*", false, listOf("first", "second", "third"))
 
+    expectIae { ClientCapParser.parse(listOf("*", "LS", "*"), callback) }
     expectIae { ClientCapParser.parse(listOf("*", "LIST", "first", "second"), callback) }
   }
 
@@ -91,9 +97,17 @@ class ClientCapParserTest {
     expectIae { ClientCapParser.parse(listOf("first", "DEL", "second", "third"), callback) }
   }
 
+  @Test fun testConstructorIsPrivate() {
+    val constructor = ClientCapParser::class.java.getDeclaredConstructor()
+    Assertions.assertThat(Modifier.isPrivate(constructor.modifiers)).isTrue()
+    constructor.isAccessible = true
+    constructor.newInstance()
+  }
+
   inline fun expectIae(code: () -> Unit) {
     try {
       code()
+      fail("Expected IAE.")
     } catch(ex: IllegalArgumentException) {
       // Don't bother checking the message
     }

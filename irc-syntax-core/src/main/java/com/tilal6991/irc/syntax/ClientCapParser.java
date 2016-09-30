@@ -34,15 +34,16 @@ public class ClientCapParser {
     String thirdArg = getOrNull(arguments, 2);
     if (subcommand.equals("LS") || subcommand.equals("LIST")) {
       boolean finalLine = thirdArg == null || thirdArg.length() != 1 || thirdArg.charAt(0) != '*';
+      String fourthArg = getOrNull(arguments, 3);
+      if (finalLine && fourthArg != null || !finalLine && fourthArg == null) {
+        throw new IllegalArgumentException(
+            String.format("Client CAP on has wrong number of arguments: %d", arguments.size()));
+      }
+
       List<String> modCapsAndValues;
       if (finalLine) {
         modCapsAndValues = thirdArg == null ? null : Utils.tokenizeOnSpace(thirdArg);
       } else {
-        String fourthArg = getOrNull(arguments, 3);
-        if (fourthArg == null) {
-          throw new IllegalArgumentException(
-              String.format("Client CAP on has wrong number of arguments: %d", arguments.size()));
-        }
         modCapsAndValues = Utils.tokenizeOnSpace(fourthArg);
       }
 
