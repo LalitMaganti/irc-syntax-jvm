@@ -129,7 +129,7 @@ public class AbstractClientMessageCallback<T> implements ClientMessageCallback<T
   }
 
   @Override
-  public T onUnknownCap(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String subcommand, @Nonnull List<String> arguments) {
+  public T onUnknownCap(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String clientId, @Nonnull String subcommand, @Nonnull List<String> arguments) {
     return null;
   }
 

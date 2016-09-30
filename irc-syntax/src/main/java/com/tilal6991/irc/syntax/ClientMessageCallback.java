@@ -130,7 +130,7 @@ public interface ClientMessageCallback<T> {
   /**
    * Callback method for CAP ONUNKNOWNCAP.
    */
-  T onUnknownCap(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String subcommand, @Nonnull List<String> arguments);
+  T onUnknownCap(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String clientId, @Nonnull String subcommand, @Nonnull List<String> arguments);
 
   /**
    * Callback method for RPL_UNKNOWNCODE replies.

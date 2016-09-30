@@ -177,8 +177,8 @@ public class MessageParser<T> {
     }
 
     @Override
-    public T onUnknownCap(@Nonnull String subcommand, @Nonnull List<String> arguments) {
-      return callback.onUnknownCap(tags, prefix, subcommand, arguments);
+    public T onUnknownCap(@Nonnull String clientId, @Nonnull String subcommand, @Nonnull List<String> arguments) {
+      return callback.onUnknownCap(tags, prefix, clientId, subcommand, arguments);
     }
 
     @Override
