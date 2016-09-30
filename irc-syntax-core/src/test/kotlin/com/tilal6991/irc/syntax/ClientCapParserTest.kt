@@ -13,13 +13,10 @@ class ClientCapParserTest {
     expectIae { ClientCapParser.parse(fiveIemList(), callback) }
 
     ClientCapParser.parse(listOf("*", "OTHER"), callback)
-    verify(callback).onUnknownCap("*", listOf("OTHER"))
+    verify(callback).onUnknownCap("*", "OTHER", emptyList())
 
     ClientCapParser.parse(listOf("*", "OTHER") + oneItemList(), callback)
-    verify(callback).onUnknownCap("*", listOf("OTHER") + oneItemList())
-
-    ClientCapParser.parse(listOf("*", "OTHER") + twoItemList(), callback)
-    verify(callback).onUnknownCap("*", listOf("OTHER") + twoItemList())
+    verify(callback).onUnknownCap("*", "OTHER", oneItemList())
   }
 
   @Test fun testCapLs() {

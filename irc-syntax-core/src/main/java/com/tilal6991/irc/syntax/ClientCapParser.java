@@ -53,8 +53,7 @@ public class ClientCapParser {
       }
     } else {
       if (arguments.size() == 4) {
-        throw new IllegalArgumentException(
-            String.format("Client CAP on has wrong number of arguments: %d", 4));
+        throw new IllegalArgumentException("Client CAP on has wrong number of arguments: 4");
       }
 
       List<String> modCapsAndValues = thirdArg == null ? null : Utils.tokenizeOnSpace(thirdArg);
@@ -68,7 +67,8 @@ public class ClientCapParser {
         case "DEL":
           return callback.onCapDel(clientId, modCapsAndValues);
         default:
-          return callback.onUnknownCap(subcommand, arguments.subList(1, arguments.size()));
+          return callback.onUnknownCap(
+                  clientId, subcommand, arguments.subList(2, arguments.size()));
       }
     }
   }
@@ -97,6 +97,7 @@ public class ClientCapParser {
     T onCapDel(@Nonnull String clientId, @Nullable List<String> modCapabilityAndValues);
 
     /** Callback method for unknown subcommand. */
-    T onUnknownCap(@Nonnull String subcommand, @Nonnull List<String> arguments);
+    T onUnknownCap(
+            @Nonnull String clientId, @Nonnull String subcommand, @Nonnull List<String> arguments);
   }
 }
