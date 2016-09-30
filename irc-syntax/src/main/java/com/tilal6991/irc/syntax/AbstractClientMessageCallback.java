@@ -7,7 +7,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class AbstractMessageCallback<T> implements MessageCallback<T> {
+public class AbstractClientMessageCallback<T> implements ClientMessageCallback<T> {
   @Override
   public T onAccount(@Nullable List<String> tags, @Nullable String prefix, @Nullable String account) {
     return null;
@@ -29,7 +29,32 @@ public class AbstractMessageCallback<T> implements MessageCallback<T> {
   }
 
   @Override
-  public T onCap(@Nullable List<String> tags, @Nullable String prefix, @Nonnull List<String> args) {
+  public T onCapAck(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String clientId, @Nullable List<String> modCapabilityAndValues) {
+    return null;
+  }
+
+  @Override
+  public T onCapDel(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String clientId, @Nullable List<String> modCapabilityAndValues) {
+    return null;
+  }
+
+  @Override
+  public T onCapList(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String clientId, boolean finalLine, @Nullable List<String> modCapabilityAndValues) {
+    return null;
+  }
+
+  @Override
+  public T onCapLs(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String clientId, boolean finalLine, @Nullable List<String> modCapabilityAndValues) {
+    return null;
+  }
+
+  @Override
+  public T onCapNak(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String clientId, @Nullable List<String> modCapabilityAndValues) {
+    return null;
+  }
+
+  @Override
+  public T onCapNew(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String clientId, @Nullable List<String> modCapabilityAndValues) {
     return null;
   }
 
@@ -100,6 +125,11 @@ public class AbstractMessageCallback<T> implements MessageCallback<T> {
 
   @Override
   public T onQuit(@Nullable List<String> tags, @Nullable String prefix, @Nullable String reason) {
+    return null;
+  }
+
+  @Override
+  public T onUnknownCap(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String subcommand, @Nonnull List<String> arguments) {
     return null;
   }
 

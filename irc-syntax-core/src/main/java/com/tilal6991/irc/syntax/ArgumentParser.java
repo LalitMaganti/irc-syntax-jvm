@@ -181,7 +181,7 @@ public class ArgumentParser {
         @Nonnull String modifiedReferenceTag, @Nonnull String type, @Nonnull List<String> arguments);
 
     /** Callback method for CAP command. */
-    T onCap(@Nonnull List<String> args);
+    T onCap(@Nonnull List<String> arguments);
 
     /** Callback method for a reply message. */
     T onReply(int code, @Nonnull String target, @Nonnull List<String> arguments);

@@ -13,9 +13,8 @@ import javax.lang.model.element.Modifier
 open class CallbackGenTask : SourceTask() {
   private val SLASH = File.separator
 
-  private val callbackClassName = ClassName.get(outputPackage, "MessageCallback")
-  private val abstractClassName = ClassName.get(outputPackage, "AbstractMessageCallback")
-  private val pojoCallbackClassName = ClassName.get(outputPackage, "PojoMessageCallback")
+  private val callbackClassName = ClassName.get(outputPackage, "ClientMessageCallback")
+  private val abstractClassName = ClassName.get(outputPackage, "AbstractClientMessageCallback")
 
   private val canonicalCallbackTypeVariable = TypeVariableName.get("T")
   private val parameterizedCallbackName =
@@ -38,43 +37,26 @@ open class CallbackGenTask : SourceTask() {
     val code = CodeGenerator(
         loader.loadClass(callbackClass("CodeParser")), ClassName.get(name.klass.enclosingClass))
 
+    val clientCap = ClientCapGenerator(loader.loadClass(callbackClass("ClientCapParser")))
+
     val argument = ArgumentGenerator(
-        loader.loadClass(callbackClass("ArgumentParser")), ClassName.get(code.klass.enclosingClass))
+        loader.loadClass(callbackClass("ArgumentParser")),
+        ClassName.get(code.klass.enclosingClass),
+        ClassName.get(clientCap.klass.enclosingClass))
 
     val tokenizer = TokenizerGenerator(
         loader.loadClass(callbackClass("MessageTokenizer")),
         ClassName.get(argument.klass.enclosingClass))
     val tokenizerName = ClassName.get(tokenizer.klass.enclosingClass)
 
-    val flattenedCallback = generateFlattenedCallback(argument, code, name)
+    val flattenedCallback = generateFlattenedCallback(argument, clientCap, code, name)
     JavaFile.builder(outputPackage, flattenedCallback).build().writeTo(output)
 
     val abstractCallback = generateAbstractCallback(flattenedCallback)
     JavaFile.builder(outputPackage, abstractCallback).build().writeTo(output)
 
-    val message = generateMessageClasses(tokenizer, argument, code, name)
-    JavaFile.builder(outputPackage, message).build().writeTo(output)
-
-    val pojo = generatePojoCallback(flattenedCallback)
-    JavaFile.builder(outputPackage, pojo).build().writeTo(output)
-
-    val parser = generateParser(tokenizerName, tokenizer, argument, code, name)
+    val parser = generateParser(tokenizerName, tokenizer, argument, clientCap, code, name)
     JavaFile.builder(outputPackage, parser).build().writeTo(output)
-  }
-
-  private fun generatePojoCallback(flattenedCallback: TypeSpec): TypeSpec? {
-    return TypeSpec.classBuilder(pojoCallbackClassName)
-        .addModifiers(Modifier.PUBLIC)
-        .addSuperinterface(ParameterizedTypeName.get(callbackClassName, messageClassName))
-        .addMethods(
-            flattenedCallback.methodSpecs.map {
-              val params = it.parameters.map { it.name }.joinToString(", ")
-              overriding(it)
-                  .returns(messageClassName)
-                  .addStatement("return new Message.${it.name.removePrefix("on")}($params)")
-                  .build()
-            })
-        .build()
   }
 
   private fun generateAbstractCallback(flattenedCallback: TypeSpec): TypeSpec {
@@ -96,21 +78,6 @@ open class CallbackGenTask : SourceTask() {
             generators.flatMap { it.callbackMethods() }
                 .sortedBy { it.name })
         .addTypeVariable(canonicalCallbackTypeVariable)
-        .build()
-  }
-
-  private fun generateMessageClasses(vararg generators: Generator): TypeSpec {
-    val constructor = MethodSpec.constructorBuilder()
-        .addTokenizerParameters()
-        .addTokenizerAssignment()
-        .addModifiers(Modifier.PUBLIC)
-        .build()
-
-    return TypeSpec.classBuilder(messageClassName)
-        .addModifiers(Modifier.PUBLIC)
-        .addTokenizerFields()
-        .addMethod(constructor)
-        .addTypes(generators.flatMap { it.messages() })
         .build()
   }
 
@@ -163,6 +130,6 @@ open class CallbackGenTask : SourceTask() {
   }
 
   private fun callbackClass(outer: String): String {
-    return outputPackage + ".$outer\$Callback"
+    return "$outputPackage.$outer\$Callback"
   }
 }

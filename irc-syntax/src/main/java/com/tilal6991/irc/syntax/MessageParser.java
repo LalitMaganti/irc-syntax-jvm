@@ -8,11 +8,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class MessageParser<T> {
-  private final MessageCallback<T> callback;
+  private final ClientMessageCallback<T> callback;
 
   private final Inner inner;
 
-  public MessageParser(@Nonnull MessageCallback<T> callback) {
+  public MessageParser(@Nonnull ClientMessageCallback<T> callback) {
     this.callback = callback;
     this.inner = new Inner();
   }
@@ -21,7 +21,7 @@ public class MessageParser<T> {
     return MessageTokenizer.tokenize(line, inner);
   }
 
-  private class Inner implements MessageTokenizer.Callback<T>, ArgumentParser.Callback<T>, CodeParser.Callback<T>, NamesParser.Callback<T> {
+  private class Inner implements MessageTokenizer.Callback<T>, ArgumentParser.Callback<T>, ClientCapParser.Callback<T>, CodeParser.Callback<T>, NamesParser.Callback<T> {
     private List<String> tags;
 
     private String prefix;
@@ -49,8 +49,38 @@ public class MessageParser<T> {
     }
 
     @Override
-    public T onCap(@Nonnull List<String> args) {
-      return callback.onCap(tags, prefix, args);
+    public T onCap(@Nonnull List<String> arguments) {
+      return ClientCapParser.parse(arguments, this);
+    }
+
+    @Override
+    public T onCapAck(@Nonnull String clientId, @Nullable List<String> modCapabilityAndValues) {
+      return callback.onCapAck(tags, prefix, clientId, modCapabilityAndValues);
+    }
+
+    @Override
+    public T onCapDel(@Nonnull String clientId, @Nullable List<String> modCapabilityAndValues) {
+      return callback.onCapDel(tags, prefix, clientId, modCapabilityAndValues);
+    }
+
+    @Override
+    public T onCapList(@Nonnull String clientId, boolean finalLine, @Nullable List<String> modCapabilityAndValues) {
+      return callback.onCapList(tags, prefix, clientId, finalLine, modCapabilityAndValues);
+    }
+
+    @Override
+    public T onCapLs(@Nonnull String clientId, boolean finalLine, @Nullable List<String> modCapabilityAndValues) {
+      return callback.onCapLs(tags, prefix, clientId, finalLine, modCapabilityAndValues);
+    }
+
+    @Override
+    public T onCapNak(@Nonnull String clientId, @Nullable List<String> modCapabilityAndValues) {
+      return callback.onCapNak(tags, prefix, clientId, modCapabilityAndValues);
+    }
+
+    @Override
+    public T onCapNew(@Nonnull String clientId, @Nullable List<String> modCapabilityAndValues) {
+      return callback.onCapNew(tags, prefix, clientId, modCapabilityAndValues);
     }
 
     @Override
@@ -144,6 +174,11 @@ public class MessageParser<T> {
       T temp = CodeParser.parse(code, arguments, this);
       this.target = null;
       return temp;
+    }
+
+    @Override
+    public T onUnknownCap(@Nonnull String subcommand, @Nonnull List<String> arguments) {
+      return callback.onUnknownCap(tags, prefix, subcommand, arguments);
     }
 
     @Override

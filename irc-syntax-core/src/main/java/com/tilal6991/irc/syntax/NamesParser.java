@@ -51,16 +51,7 @@ public class NamesParser {
 
     String channel = arguments.get(offset);
     String namesString = arguments.get(offset + 1);
-    List<String> names = new ArrayList<>();
-
-    int pos = 0;
-    int end = namesString.indexOf(' ', pos);
-    while (end != -1) {
-      names.add(namesString.substring(pos, end));
-      pos = end + 1;
-      end = namesString.indexOf(' ', pos);
-    }
-    names.add(namesString.substring(pos, namesString.length()));
+    List<String> names = Utils.tokenizeOnSpace(namesString);
 
     return callback.onNames(descriptor, channel, names);
   }

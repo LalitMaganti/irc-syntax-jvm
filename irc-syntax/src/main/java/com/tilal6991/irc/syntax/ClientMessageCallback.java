@@ -6,7 +6,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public interface MessageCallback<T> {
+public interface ClientMessageCallback<T> {
   /**
    * Callback method for ACCOUNT messages.
    */
@@ -28,9 +28,34 @@ public interface MessageCallback<T> {
   T onBatch(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String modifiedReferenceTag, @Nonnull String type, @Nonnull List<String> arguments);
 
   /**
-   * Callback method for CAP messages.
+   * Callback method for CAP ACK.
    */
-  T onCap(@Nullable List<String> tags, @Nullable String prefix, @Nonnull List<String> args);
+  T onCapAck(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String clientId, @Nullable List<String> modCapabilityAndValues);
+
+  /**
+   * Callback method for CAP DEL.
+   */
+  T onCapDel(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String clientId, @Nullable List<String> modCapabilityAndValues);
+
+  /**
+   * Callback method for CAP LIST.
+   */
+  T onCapList(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String clientId, boolean finalLine, @Nullable List<String> modCapabilityAndValues);
+
+  /**
+   * Callback method for CAP LS.
+   */
+  T onCapLs(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String clientId, boolean finalLine, @Nullable List<String> modCapabilityAndValues);
+
+  /**
+   * Callback method for CAP NAK.
+   */
+  T onCapNak(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String clientId, @Nullable List<String> modCapabilityAndValues);
+
+  /**
+   * Callback method for CAP NEW.
+   */
+  T onCapNew(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String clientId, @Nullable List<String> modCapabilityAndValues);
 
   /**
    * Callback method for CHGHOST messages.
@@ -101,6 +126,11 @@ public interface MessageCallback<T> {
    * Callback method for QUIT messages.
    */
   T onQuit(@Nullable List<String> tags, @Nullable String prefix, @Nullable String reason);
+
+  /**
+   * Callback method for CAP ONUNKNOWNCAP.
+   */
+  T onUnknownCap(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String subcommand, @Nonnull List<String> arguments);
 
   /**
    * Callback method for RPL_UNKNOWNCODE replies.
