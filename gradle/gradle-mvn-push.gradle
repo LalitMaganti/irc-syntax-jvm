@@ -82,7 +82,7 @@ afterEvaluate { project ->
         sign configurations.archives
     }
 
-    task sourcesJar(type: Jar, dependsOn: jar) {
+    task sourcesJar(type: Jar, dependsOn: classes) {
         classifier = 'sources'
         from sourceSets.main.allSource
     }
@@ -92,8 +92,8 @@ afterEvaluate { project ->
         from javadoc.destinationDir
     }
 
-    // add javadoc/source jar tasks as artifacts
     artifacts {
-        archives sourcesJar, javadocJar
+        archives sourcesJar
+        archives javadocJar
     }
 }
