@@ -24,7 +24,7 @@ public class ClientCapParser {
    * @throws IllegalArgumentException if an error occurs in the parsing.
    */
   public static <T> T parse(@Nonnull List<String> arguments, @Nonnull Callback<T> callback) {
-    if (arguments.size() != 2 && arguments.size() != 3 && arguments.size() != 4) {
+    if (arguments.size() < 2 || arguments.size() > 4) {
       throw new IllegalArgumentException(
           String.format("Client CAP on has wrong number of arguments: %d", arguments.size()));
     }
@@ -47,9 +47,9 @@ public class ClientCapParser {
       }
 
       if (subcommand.equals("LIST")) {
-        callback.onCapList(clientId, finalLine, modCapsAndValues);
+        return callback.onCapList(clientId, finalLine, modCapsAndValues);
       } else {
-        callback.onCapLs(clientId, finalLine, modCapsAndValues);
+        return callback.onCapLs(clientId, finalLine, modCapsAndValues);
       }
     } else {
       if (arguments.size() == 4) {
@@ -67,9 +67,10 @@ public class ClientCapParser {
           return callback.onCapNew(clientId, modCapsAndValues);
         case "DEL":
           return callback.onCapDel(clientId, modCapsAndValues);
+        default:
+          return callback.onUnknownCap(subcommand, arguments.subList(1, arguments.size()));
       }
     }
-    return callback.onUnknownCap(subcommand, arguments.subList(1, arguments.size()));
   }
 
   /** Callback class which will be invoked when parsing is successful */
