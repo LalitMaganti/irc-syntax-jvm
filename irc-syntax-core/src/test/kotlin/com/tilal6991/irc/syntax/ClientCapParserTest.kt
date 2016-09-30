@@ -1,7 +1,6 @@
 package com.tilal6991.irc.syntax
 
 import org.assertj.core.api.Assertions
-import org.junit.Assert
 import org.junit.Assert.fail
 import org.junit.Test
 import org.mockito.Mockito.mock
@@ -37,6 +36,7 @@ class ClientCapParserTest {
     verify(callback).onCapLs("*", false, listOf("first", "second", "third"))
 
     expectIae { ClientCapParser.parse(listOf("*", "LS", "*"), callback) }
+    expectIae { ClientCapParser.parse(listOf("*", "LS", "d"), callback) }
     expectIae { ClientCapParser.parse(listOf("*", "LS", "first", "second"), callback) }
   }
 
@@ -53,7 +53,8 @@ class ClientCapParserTest {
     ClientCapParser.parse(listOf("*", "LIST", "*", "first second third"), callback)
     verify(callback).onCapList("*", false, listOf("first", "second", "third"))
 
-    expectIae { ClientCapParser.parse(listOf("*", "LS", "*"), callback) }
+    expectIae { ClientCapParser.parse(listOf("*", "LIST", "*"), callback) }
+    expectIae { ClientCapParser.parse(listOf("*", "LIST", "d"), callback) }
     expectIae { ClientCapParser.parse(listOf("*", "LIST", "first", "second"), callback) }
   }
 
