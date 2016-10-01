@@ -6,7 +6,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public interface ClientMessageCallback<T> {
+public interface MessageCallback<T> {
   /**
    * Callback method for ACCOUNT messages.
    */

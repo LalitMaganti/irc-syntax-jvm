@@ -4,20 +4,19 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import static com.tilal6991.irc.syntax.Utils.getOrNull;
 
-/** Parser which considers a list of CAP message arguments from a IRC client and interprets them. */
-public class ClientCapParser {
+/** Parser which considers a list of CAP message arguments and interprets them. */
+public class CapParser {
 
   // No instances of parser.
-  private ClientCapParser() {
+  private CapParser() {
   }
 
   /**
-   * Parses IRC CAP arguments on the client side. Checks that the correct number of arguments are
-   * present for the given command and invokes the given callback synchronously with the parsed
-   * arguments if parsing was successful.
+   * Parses IRC CAP arguments. Checks that the correct number of arguments are present for the given
+   * command and invokes the given callback synchronously with the parsed arguments if parsing was
+   * successful.
    *
    * @param arguments the arguments to parse.
    * @param callback the callback to invoke with the parsed arguments.
@@ -69,7 +68,7 @@ public class ClientCapParser {
           return callback.onCapDel(clientId, modCapsAndValues);
         default:
           return callback.onUnknownCap(
-                  clientId, subcommand, arguments.subList(2, arguments.size()));
+              clientId, subcommand, arguments.subList(2, arguments.size()));
       }
     }
   }
@@ -99,6 +98,6 @@ public class ClientCapParser {
 
     /** Callback method for unknown subcommand. */
     T onUnknownCap(
-            @Nonnull String clientId, @Nonnull String subcommand, @Nonnull List<String> arguments);
+        @Nonnull String clientId, @Nonnull String subcommand, @Nonnull List<String> arguments);
   }
 }

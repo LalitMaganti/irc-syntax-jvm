@@ -8,11 +8,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class MessageParser<T> {
-  private final ClientMessageCallback<T> callback;
+  private final MessageCallback<T> callback;
 
   private final Inner inner;
 
-  public MessageParser(@Nonnull ClientMessageCallback<T> callback) {
+  public MessageParser(@Nonnull MessageCallback<T> callback) {
     this.callback = callback;
     this.inner = new Inner();
   }
@@ -21,7 +21,7 @@ public class MessageParser<T> {
     return MessageTokenizer.tokenize(line, inner);
   }
 
-  private class Inner implements MessageTokenizer.Callback<T>, ArgumentParser.Callback<T>, ClientCapParser.Callback<T>, CodeParser.Callback<T>, NamesParser.Callback<T> {
+  private class Inner implements MessageTokenizer.Callback<T>, ArgumentParser.Callback<T>, CapParser.Callback<T>, CodeParser.Callback<T>, NamesParser.Callback<T> {
     private List<String> tags;
 
     private String prefix;
@@ -50,7 +50,7 @@ public class MessageParser<T> {
 
     @Override
     public T onCap(@Nonnull List<String> arguments) {
-      return ClientCapParser.parse(arguments, this);
+      return CapParser.parse(arguments, this);
     }
 
     @Override

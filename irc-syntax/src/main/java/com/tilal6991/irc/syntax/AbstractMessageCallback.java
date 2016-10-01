@@ -7,7 +7,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class AbstractClientMessageCallback<T> implements ClientMessageCallback<T> {
+public class AbstractMessageCallback<T> implements MessageCallback<T> {
   @Override
   public T onAccount(@Nullable List<String> tags, @Nullable String prefix, @Nullable String account) {
     return null;

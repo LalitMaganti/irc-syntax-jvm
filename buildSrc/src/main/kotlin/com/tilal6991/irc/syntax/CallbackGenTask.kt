@@ -14,9 +14,8 @@ import javax.lang.model.element.Modifier
 open class CallbackGenTask : SourceTask() {
   private val SLASH = File.separator
 
-  private val callbackClassName = ClassName.get(outputPackage, "ClientMessageCallback")
-  private val abstractClassName = ClassName.get(outputPackage, "AbstractClientMessageCallback")
-  private val delegatingClassName = ClassName.get(outputPackage, "DelegatingClientMessageCallback")
+  private val callbackClassName = ClassName.get(outputPackage, "MessageCallback")
+  private val abstractClassName = ClassName.get(outputPackage, "AbstractMessageCallback")
 
   private val canonicalCallbackTypeVariable = TypeVariableName.get("T")
   private val parameterizedCallbackName =
@@ -39,7 +38,7 @@ open class CallbackGenTask : SourceTask() {
     val code = CodeGenerator(
         loader.loadClass(callbackClass("CodeParser")), ClassName.get(name.klass.enclosingClass))
 
-    val clientCap = ClientCapGenerator(loader.loadClass(callbackClass("ClientCapParser")))
+    val clientCap = ClientCapGenerator(loader.loadClass(callbackClass("CapParser")))
 
     val argument = ArgumentGenerator(
         loader.loadClass(callbackClass("ArgumentParser")),
@@ -57,9 +56,6 @@ open class CallbackGenTask : SourceTask() {
     val abstractCallback = generateAbstractCallback(flattenedCallback)
     JavaFile.builder(outputPackage, abstractCallback).build().writeTo(output)
 
-    val delegatingCallback = generateDelegatingCallback(flattenedCallback)
-    JavaFile.builder(outputPackage, delegatingCallback).build().writeTo(output)
-
     val parser = generateParser(tokenizerName, tokenizer, argument, clientCap, code, name)
     JavaFile.builder(outputPackage, parser).build().writeTo(output)
   }
@@ -73,44 +69,6 @@ open class CallbackGenTask : SourceTask() {
             flattenedCallback.methodSpecs.map {
               overriding(it).addStatement("return null").build()
             })
-        .build()
-  }
-
-  private fun generateDelegatingCallback(flattenedCallback: TypeSpec): TypeSpec {
-    val callbackObject = ParameterizedTypeName.get(
-        callbackClassName, WildcardTypeName.subtypeOf(TypeName.OBJECT))
-    val callbacks = ParameterizedTypeName.get(LIST_CLASS, callbackObject)
-    return TypeSpec.classBuilder(delegatingClassName)
-        .addModifiers(Modifier.PUBLIC)
-        .addSuperinterface(ParameterizedTypeName.get(callbackClassName, ClassName.VOID.box()))
-        .addField(callbacks, "callbacks", Modifier.PRIVATE, Modifier.FINAL)
-        .addMethod(MethodSpec.constructorBuilder()
-            .addStatement("callbacks = new \$T<>()", TypeName.get(ArrayList::class.java))
-            .build())
-        .addMethods(flattenedCallback.methodSpecs.map {
-          overriding(it)
-              .returns(TypeName.VOID.box())
-              .beginControlFlow("for (\$T callback : callbacks)", callbackObject)
-              .addStatement(
-                  "callback.${it.name}(${it.parameters.map { it.name }.joinToString(", ")})")
-              .endControlFlow()
-              .addStatement("return null")
-              .build()
-        })
-        .addMethod(MethodSpec.methodBuilder("addCallback")
-            .addModifiers(Modifier.PUBLIC)
-            .returns(TypeName.VOID)
-            .addTypeVariable(canonicalCallbackTypeVariable)
-            .addStatement("callbacks.add(callback)")
-            .addParameter(parameterizedCallbackName, "callback")
-            .build())
-        .addMethod(MethodSpec.methodBuilder("removeCallback")
-            .addModifiers(Modifier.PUBLIC)
-            .returns(TypeName.VOID)
-            .addTypeVariable(canonicalCallbackTypeVariable)
-            .addStatement("callbacks.remove(callback)")
-            .addParameter(parameterizedCallbackName, "callback")
-            .build())
         .build()
   }
 
