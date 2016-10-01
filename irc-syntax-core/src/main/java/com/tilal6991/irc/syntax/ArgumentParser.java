@@ -48,31 +48,15 @@ public class ArgumentParser {
       case "KICK":
         checkCountOneOf(command, arguments, 2, 3);
         return callback.onKick(arguments.get(0), arguments.get(1), Utils.getOrNull(arguments, 2));
-      case "AUTHENTICATE":
-        checkCountOneOf(command, arguments, 1);
-        return callback.onAuthenticate(arguments.get(0));
-      case "ACCOUNT":
-        checkCountOneOf(command, arguments, 1);
-        return callback.onAccount(arguments.get(0));
-      case "CHGHOST":
-        checkCountOneOf(command, arguments, 2);
-        return callback.onChghost(arguments.get(0), arguments.get(1));
       case "PRIVMSG":
         checkCountOneOf(command, arguments, 2);
         return callback.onPrivmsg(arguments.get(0), arguments.get(1));
       case "NOTICE":
         checkCountOneOf(command, arguments, 2);
         return callback.onNotice(arguments.get(0), arguments.get(1));
-      case "AWAY":
-        checkCountOneOf(command, arguments, 0, 1);
-        return callback.onAway(Utils.getOrNull(arguments, 0));
       case "PING":
         checkCountOneOf(command, arguments, 0, 1);
         return callback.onPing(Utils.getOrNull(arguments, 0));
-      case "BATCH":
-        checkCountGreaterThanEq(command, arguments, 2);
-        return callback.onBatch(
-            arguments.get(0), arguments.get(1), arguments.subList(2, arguments.size()));
       case "CAP":
         checkCountGreaterThanEq(command, arguments, 1);
         return callback.onCap(arguments);
@@ -155,15 +139,6 @@ public class ArgumentParser {
     /** Callback method for PART command. */
     T onPart(@Nonnull String channel, @Nullable String reason);
 
-    /** Callback method for AUTHENTICATE command. */
-    T onAuthenticate(@Nonnull String data);
-
-    /** Callback method for ACCOUNT command. */
-    T onAccount(@Nullable String account);
-
-    /** Callback method for CHGHOST command. */
-    T onChghost(@Nonnull String newUser, @Nonnull String newHost);
-
     /** Callback method for PRIVMSG command. */
     T onPrivmsg(@Nonnull String target, @Nonnull String message);
 
@@ -172,13 +147,6 @@ public class ArgumentParser {
 
     /** Callback method for INVITE command. */
     T onInvite(@Nonnull String target, @Nonnull String channel);
-
-    /** Callback method for AWAY command. */
-    T onAway(@Nullable String message);
-
-    /** Callback method for BATCH command. */
-    T onBatch(
-        @Nonnull String modifiedReferenceTag, @Nonnull String type, @Nonnull List<String> arguments);
 
     /** Callback method for CAP command. */
     T onCap(@Nonnull List<String> arguments);
