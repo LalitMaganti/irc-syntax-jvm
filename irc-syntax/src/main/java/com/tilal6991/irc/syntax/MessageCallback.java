@@ -8,26 +8,6 @@ import javax.annotation.Nullable;
 
 public interface MessageCallback<T> {
   /**
-   * Callback method for ACCOUNT messages.
-   */
-  T onAccount(@Nullable List<String> tags, @Nullable String prefix, @Nullable String account);
-
-  /**
-   * Callback method for AUTHENTICATE messages.
-   */
-  T onAuthenticate(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String data);
-
-  /**
-   * Callback method for AWAY messages.
-   */
-  T onAway(@Nullable List<String> tags, @Nullable String prefix, @Nullable String message);
-
-  /**
-   * Callback method for BATCH messages.
-   */
-  T onBatch(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String modifiedReferenceTag, @Nonnull String type, @Nonnull List<String> arguments);
-
-  /**
    * Callback method for CAP ACK.
    */
   T onCapAck(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String clientId, @Nullable List<String> modCapabilityAndValues);
@@ -56,11 +36,6 @@ public interface MessageCallback<T> {
    * Callback method for CAP NEW.
    */
   T onCapNew(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String clientId, @Nullable List<String> modCapabilityAndValues);
-
-  /**
-   * Callback method for CHGHOST messages.
-   */
-  T onChghost(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String newUser, @Nonnull String newHost);
 
   /**
    * Callback method for RPL_ENDOFNAMES replies.

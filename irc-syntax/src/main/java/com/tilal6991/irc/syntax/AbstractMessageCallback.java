@@ -9,26 +9,6 @@ import javax.annotation.Nullable;
 
 public class AbstractMessageCallback<T> implements MessageCallback<T> {
   @Override
-  public T onAccount(@Nullable List<String> tags, @Nullable String prefix, @Nullable String account) {
-    return null;
-  }
-
-  @Override
-  public T onAuthenticate(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String data) {
-    return null;
-  }
-
-  @Override
-  public T onAway(@Nullable List<String> tags, @Nullable String prefix, @Nullable String message) {
-    return null;
-  }
-
-  @Override
-  public T onBatch(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String modifiedReferenceTag, @Nonnull String type, @Nonnull List<String> arguments) {
-    return null;
-  }
-
-  @Override
   public T onCapAck(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String clientId, @Nullable List<String> modCapabilityAndValues) {
     return null;
   }
@@ -55,11 +35,6 @@ public class AbstractMessageCallback<T> implements MessageCallback<T> {
 
   @Override
   public T onCapNew(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String clientId, @Nullable List<String> modCapabilityAndValues) {
-    return null;
-  }
-
-  @Override
-  public T onChghost(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String newUser, @Nonnull String newHost) {
     return null;
   }
 

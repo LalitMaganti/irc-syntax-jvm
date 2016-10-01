@@ -29,26 +29,6 @@ public class MessageParser<T> {
     private String target;
 
     @Override
-    public T onAccount(@Nullable String account) {
-      return callback.onAccount(tags, prefix, account);
-    }
-
-    @Override
-    public T onAuthenticate(@Nonnull String data) {
-      return callback.onAuthenticate(tags, prefix, data);
-    }
-
-    @Override
-    public T onAway(@Nullable String message) {
-      return callback.onAway(tags, prefix, message);
-    }
-
-    @Override
-    public T onBatch(@Nonnull String modifiedReferenceTag, @Nonnull String type, @Nonnull List<String> arguments) {
-      return callback.onBatch(tags, prefix, modifiedReferenceTag, type, arguments);
-    }
-
-    @Override
     public T onCap(@Nonnull List<String> arguments) {
       return CapParser.parse(arguments, this);
     }
@@ -81,11 +61,6 @@ public class MessageParser<T> {
     @Override
     public T onCapNew(@Nonnull String clientId, @Nullable List<String> modCapabilityAndValues) {
       return callback.onCapNew(tags, prefix, clientId, modCapabilityAndValues);
-    }
-
-    @Override
-    public T onChghost(@Nonnull String newUser, @Nonnull String newHost) {
-      return callback.onChghost(tags, prefix, newUser, newHost);
     }
 
     @Override
