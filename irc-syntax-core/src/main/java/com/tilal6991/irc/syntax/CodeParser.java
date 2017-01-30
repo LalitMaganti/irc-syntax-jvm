@@ -5,6 +5,9 @@ import java.util.Locale;
 
 import javax.annotation.Nonnull;
 
+import static com.tilal6991.irc.syntax.Utils.checkCountIs;
+import static com.tilal6991.irc.syntax.Utils.checkCountIsGeq;
+
 /** Parser which considers a list of IRC code arguments and interprets them. */
 public class CodeParser {
 
@@ -44,30 +47,6 @@ public class CodeParser {
         return callback.onEndOfNames(arguments.get(0), arguments.get(1));
       default:
         return callback.onUnknownCode(code, arguments);
-    }
-  }
-
-  private static void checkCountIs(int code, List<String> arguments, int count) {
-    if (arguments.size() != count) {
-      throw new IllegalArgumentException(
-          String.format(
-              Locale.getDefault(),
-              "Code: %d. Expected argument count: %s. Actual argument count: %d.",
-              code,
-              count,
-              arguments.size()));
-    }
-  }
-
-  private static void checkCountIsGeq(int code, List<String> arguments, int count) {
-    if (arguments.size() < count) {
-      throw new IllegalArgumentException(
-              String.format(
-                      Locale.getDefault(),
-                      "Code: %d. Expected argument count geq: %s. Actual argument count: %d.",
-                      code,
-                      count,
-                      arguments.size()));
     }
   }
 

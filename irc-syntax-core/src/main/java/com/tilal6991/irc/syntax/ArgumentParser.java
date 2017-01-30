@@ -7,6 +7,9 @@ import java.util.Locale;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import static com.tilal6991.irc.syntax.Utils.checkCountIsGeq;
+import static com.tilal6991.irc.syntax.Utils.checkCountOneOf;
+
 /** Parser which considers a list of IRC message arguments and interprets them. */
 public class ArgumentParser {
 
@@ -34,13 +37,13 @@ public class ArgumentParser {
         checkCountOneOf(command, arguments, 0, 1);
         return callback.onQuit(Utils.getOrNull(arguments, 0));
       case "JOIN":
-        checkCountGreaterThanEq(command, arguments, 1);
+        checkCountIsGeq(command, arguments, 1);
         return callback.onJoin(arguments.get(0), arguments.subList(1, arguments.size()));
       case "PART":
         checkCountOneOf(command, arguments, 1, 2);
         return callback.onPart(arguments.get(0), Utils.getOrNull(arguments, 1));
       case "MODE":
-        checkCountGreaterThanEq(command, arguments, 2);
+        checkCountIsGeq(command, arguments, 2);
         return callback.onMode(arguments.get(0), arguments.subList(1, arguments.size()));
       case "INVITE":
         checkCountOneOf(command, arguments, 2);
@@ -68,31 +71,6 @@ public class ArgumentParser {
           checkCountGreaterThanEq(command, arguments, 1);
           return callback.onReply(code, arguments.get(0), arguments.subList(1, arguments.size()));
         }
-    }
-  }
-
-  private static void checkCountOneOf(String command, List<String> arguments, int... counts) {
-    int index = Arrays.binarySearch(counts, arguments.size());
-    if (index < 0) {
-      throw new IllegalArgumentException(
-          String.format(
-              Locale.getDefault(),
-              "Command: %s. Expected argument count: %s. Actual argument count: %d.",
-              command,
-              Arrays.toString(counts),
-              arguments.size()));
-    }
-  }
-
-  private static void checkCountGreaterThanEq(String command, List<String> arguments, int count) {
-    if (arguments.size() < count) {
-      throw new IllegalArgumentException(
-          String.format(
-              Locale.getDefault(),
-              "Command: %s. Expected argument count geq: %d. Actual argument count: %d.",
-              command,
-              count,
-              arguments.size()));
     }
   }
 

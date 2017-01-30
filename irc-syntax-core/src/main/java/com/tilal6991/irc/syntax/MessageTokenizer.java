@@ -112,7 +112,6 @@ public class MessageTokenizer {
     return end == -1 ? input.length() : end;
   }
 
-
   /** Callback class which will be used when parsing is successful */
   public interface Callback<T> {
 
