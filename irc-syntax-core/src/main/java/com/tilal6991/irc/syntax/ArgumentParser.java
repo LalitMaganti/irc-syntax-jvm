@@ -61,14 +61,14 @@ public class ArgumentParser {
         checkCountOneOf(command, arguments, 0, 1);
         return callback.onPing(Utils.getOrNull(arguments, 0));
       case "CAP":
-        checkCountGreaterThanEq(command, arguments, 1);
+        checkCountIsGeq(command, arguments, 1);
         return callback.onCap(arguments);
       default:
         int code = parseCode(command);
         if (code == -1) {
           return callback.onUnknownCommand(command, arguments);
         } else {
-          checkCountGreaterThanEq(command, arguments, 1);
+          checkCountIsGeq(command, arguments, 1);
           return callback.onReply(code, arguments.get(0), arguments.subList(1, arguments.size()));
         }
     }

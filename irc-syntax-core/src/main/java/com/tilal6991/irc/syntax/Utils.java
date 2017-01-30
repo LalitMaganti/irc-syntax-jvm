@@ -59,7 +59,7 @@ class Utils {
     }
   }
 
-    private static void checkCountGreaterThanEq(String command, List<String> arguments, int count) {
+  static void checkCountIsGeq(String command, List<String> arguments, int count) {
         if (arguments.size() < count) {
             throw new IllegalArgumentException(
                     String.format(
