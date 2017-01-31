@@ -1,10 +1,11 @@
 package com.tilal6991.irc.syntax;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /** Contains utility methods for use by parsers and tokenizers. */
 class Utils {
@@ -13,7 +14,7 @@ class Utils {
   private Utils() {
   }
 
-  static String getOrNull(@Nullable List<String> list, int index) {
+  static String getOrNull(@Nonnull List<String> list, int index) {
     if (index >= list.size()) {
       return null;
     }
@@ -31,5 +32,54 @@ class Utils {
     }
     tokens.add(str.substring(pos, str.length()));
     return tokens;
+  }
+
+  static void checkCountOneOf(String command, List<String> arguments, int... counts) {
+    int index = Arrays.binarySearch(counts, arguments.size());
+    if (index < 0) {
+      throw new IllegalArgumentException(
+              String.format(
+                      Locale.getDefault(),
+                      "Command: %s. Expected argument count: %s. Actual argument count: %d.",
+                      command,
+                      Arrays.toString(counts),
+                      arguments.size()));
+    }
+  }
+
+  static void checkCountIs(int code, List<String> arguments, int count) {
+    if (arguments.size() != count) {
+      throw new IllegalArgumentException(
+              String.format(
+                      Locale.getDefault(),
+                      "Code: %d. Expected argument count: %s. Actual argument count: %d.",
+                      code,
+                      count,
+                      arguments.size()));
+    }
+  }
+
+  static void checkCountIsGeq(String command, List<String> arguments, int count) {
+        if (arguments.size() < count) {
+            throw new IllegalArgumentException(
+                    String.format(
+                            Locale.getDefault(),
+                            "Command: %s. Expected argument count geq: %d. Actual argument count: %d.",
+                            command,
+                            count,
+                            arguments.size()));
+        }
+    }
+
+  static void checkCountIsGeq(int code, List<String> arguments, int count) {
+    if (arguments.size() < count) {
+      throw new IllegalArgumentException(
+              String.format(
+                      Locale.getDefault(),
+                      "Code: %d. Expected argument count geq: %s. Actual argument count: %d.",
+                      code,
+                      count,
+                      arguments.size()));
+    }
   }
 }
