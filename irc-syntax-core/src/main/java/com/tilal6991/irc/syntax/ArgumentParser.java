@@ -1,14 +1,11 @@
 package com.tilal6991.irc.syntax;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import static com.tilal6991.irc.syntax.Utils.checkCountIsGeq;
 import static com.tilal6991.irc.syntax.Utils.checkCountOneOf;
+
+import java.util.List;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /** Parser which considers a list of IRC message arguments and interprets them. */
 public class ArgumentParser {

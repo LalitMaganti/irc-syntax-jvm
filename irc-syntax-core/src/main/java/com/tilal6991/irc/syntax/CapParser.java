@@ -1,10 +1,10 @@
 package com.tilal6991.irc.syntax;
 
-import java.util.List;
+import static com.tilal6991.irc.syntax.Utils.getOrNull;
 
+import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import static com.tilal6991.irc.syntax.Utils.getOrNull;
 
 /** Parser which considers a list of CAP message arguments and interprets them. */
 public class CapParser {

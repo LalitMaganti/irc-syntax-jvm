@@ -3,7 +3,6 @@ package com.tilal6991.irc.syntax;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -124,8 +123,8 @@ public class MessageTokenizer {
      * @param arguments the arguments as specified by RFC1459.
      */
     T onLineTokenized(@Nullable List<String> tags,
-                      @Nullable String prefix,
-                      @Nonnull String command,
-                      @Nonnull List<String> arguments);
+        @Nullable String prefix,
+        @Nonnull String command,
+        @Nonnull List<String> arguments);
   }
 }

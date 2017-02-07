@@ -2,7 +2,6 @@ package com.tilal6991.irc.syntax;
 
 import java.util.List;
 import java.util.Locale;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -68,6 +67,8 @@ public class NamesParser {
 
     /** Callback method for names messages. */
     T onNames(
-        @Nullable Character channelDescriptor, @Nonnull String channel, @Nonnull List<String> names);
+        @Nullable Character channelDescriptor,
+        @Nonnull String channel,
+        @Nonnull List<String> names);
   }
 }
