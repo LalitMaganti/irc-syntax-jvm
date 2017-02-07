@@ -70,7 +70,7 @@ public class ArgumentParser {
         checkCountOneOf(command, arguments, 0, 1);
         return callback.onPing(Utils.getOrNull(arguments, 0));
       case "BATCH":
-        checkCountGreaterThanEq(command, arguments, 2);
+        checkCountIsGeq(command, arguments, 2);
         return callback.onBatch(
             arguments.get(0), arguments.get(1), arguments.subList(2, arguments.size()));
       case "CAP":
