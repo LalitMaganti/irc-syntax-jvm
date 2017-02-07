@@ -56,6 +56,33 @@ class CodeParserTest {
     verifyTooMany(366, threeItemList())
   }
 
+  @Test fun testMotd() {
+    verifyTooFew(372, emptyList())
+
+    parse(372, listOf("message"))
+    verify(callback).onMotd("message")
+
+    verifyTooMany(372, twoItemList())
+  }
+
+  @Test fun testMotdStart() {
+    verifyTooFew(375, emptyList())
+
+    parse(375, listOf("message"))
+    verify(callback).onMotd("message")
+
+    verifyTooMany(375, twoItemList())
+  }
+
+  @Test fun testEndOfMotd() {
+    verifyTooFew(376, emptyList())
+
+    parse(376, listOf("message"))
+    verify(callback).onMotd("message")
+
+    verifyTooMany(376, twoItemList())
+  }
+
   @Test fun testConstructorIsPrivate() {
     val constructor = CodeParser::class.java.getDeclaredConstructor()
     Assertions.assertThat(Modifier.isPrivate(constructor.modifiers)).isTrue()
