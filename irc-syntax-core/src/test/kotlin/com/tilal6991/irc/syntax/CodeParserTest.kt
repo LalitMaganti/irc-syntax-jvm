@@ -69,7 +69,7 @@ class CodeParserTest {
     verifyTooFew(375, emptyList())
 
     parse(375, listOf("message"))
-    verify(callback).onMotd("message")
+    verify(callback).onMotdStart("message")
 
     verifyTooMany(375, twoItemList())
   }
@@ -78,7 +78,7 @@ class CodeParserTest {
     verifyTooFew(376, emptyList())
 
     parse(376, listOf("message"))
-    verify(callback).onMotd("message")
+    verify(callback).onEndOfMotd("message")
 
     verifyTooMany(376, twoItemList())
   }
