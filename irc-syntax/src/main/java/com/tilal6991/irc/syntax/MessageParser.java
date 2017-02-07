@@ -64,6 +64,11 @@ public class MessageParser<T> {
     }
 
     @Override
+    public T onEndOfMotd(@Nonnull String message) {
+      return callback.onEndOfMotd(tags, prefix, target, message);
+    }
+
+    @Override
     public T onEndOfNames(@Nonnull String channel, @Nonnull String message) {
       return callback.onEndOfNames(tags, prefix, target, channel, message);
     }
@@ -101,6 +106,16 @@ public class MessageParser<T> {
     @Override
     public T onMode(@Nonnull String target, @Nonnull List<String> arguments) {
       return callback.onMode(tags, prefix, target, arguments);
+    }
+
+    @Override
+    public T onMotd(@Nonnull String message) {
+      return callback.onMotd(tags, prefix, target, message);
+    }
+
+    @Override
+    public T onMotdStart(@Nonnull String message) {
+      return callback.onMotdStart(tags, prefix, target, message);
     }
 
     @Override

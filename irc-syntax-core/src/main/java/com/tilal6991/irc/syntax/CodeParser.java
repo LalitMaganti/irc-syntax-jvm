@@ -13,6 +13,9 @@ public class CodeParser {
   private static final int RPL_ISUPPORT = 5;
   private static final int RPL_NAMREPLY = 353;
   private static final int RPL_ENDOFNAMES = 366;
+  private static final int RPL_MOTD = 372;
+  private static final int RPL_MOTDSTART = 375;
+  private static final int RPL_ENDOFMOTD = 376;
 
   // No instances of parser.
   private CodeParser() {
@@ -43,6 +46,15 @@ public class CodeParser {
       case RPL_ENDOFNAMES:
         checkCountIs(code, arguments, 2);
         return callback.onEndOfNames(arguments.get(0), arguments.get(1));
+      case RPL_MOTD:
+        checkCountIs(code, arguments, 1);
+        return callback.onMotd(arguments.get(0));
+      case RPL_MOTDSTART:
+        checkCountIs(code, arguments, 1);
+        return callback.onMotdStart(arguments.get(0));
+      case RPL_ENDOFMOTD:
+        checkCountIs(code, arguments, 1);
+        return callback.onEndOfMotd(arguments.get(0));
       default:
         return callback.onUnknownCode(code, arguments);
     }
@@ -62,6 +74,15 @@ public class CodeParser {
 
     /** Callback method for RPL_ENDOFNAMES code. */
     T onEndOfNames(@Nonnull String channel, @Nonnull String message);
+
+    /** Callback method for RPL_MOTD code. */
+    T onMotd(@Nonnull String message);
+
+    /** Callback method for RPL_MOTDSTART code. */
+    T onMotdStart(@Nonnull String message);
+
+    /** Callback method for RPL_ENDOFMOTD code. */
+    T onEndOfMotd(@Nonnull String message);
 
     /** Callback method for any unknown codes */
     T onUnknownCode(int code, @Nonnull List<String> arguments);

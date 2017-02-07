@@ -39,6 +39,11 @@ public class AbstractMessageCallback<T> implements MessageCallback<T> {
   }
 
   @Override
+  public T onEndOfMotd(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String target, @Nonnull String message) {
+    return null;
+  }
+
+  @Override
   public T onEndOfNames(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String target, @Nonnull String channel, @Nonnull String message) {
     return null;
   }
@@ -65,6 +70,16 @@ public class AbstractMessageCallback<T> implements MessageCallback<T> {
 
   @Override
   public T onMode(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String target, @Nonnull List<String> arguments) {
+    return null;
+  }
+
+  @Override
+  public T onMotd(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String target, @Nonnull String message) {
+    return null;
+  }
+
+  @Override
+  public T onMotdStart(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String target, @Nonnull String message) {
     return null;
   }
 

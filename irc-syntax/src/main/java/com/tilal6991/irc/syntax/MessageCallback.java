@@ -38,6 +38,11 @@ public interface MessageCallback<T> {
   T onCapNew(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String clientId, @Nullable List<String> modCapabilityAndValues);
 
   /**
+   * Callback method for RPL_ENDOFMOTD replies.
+   */
+  T onEndOfMotd(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String target, @Nonnull String message);
+
+  /**
    * Callback method for RPL_ENDOFNAMES replies.
    */
   T onEndOfNames(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String target, @Nonnull String channel, @Nonnull String message);
@@ -66,6 +71,16 @@ public interface MessageCallback<T> {
    * Callback method for MODE messages.
    */
   T onMode(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String target, @Nonnull List<String> arguments);
+
+  /**
+   * Callback method for RPL_MOTD replies.
+   */
+  T onMotd(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String target, @Nonnull String message);
+
+  /**
+   * Callback method for RPL_MOTDSTART replies.
+   */
+  T onMotdStart(@Nullable List<String> tags, @Nullable String prefix, @Nonnull String target, @Nonnull String message);
 
   /**
    * Callback method for RPL_NAMREPLY replies.
