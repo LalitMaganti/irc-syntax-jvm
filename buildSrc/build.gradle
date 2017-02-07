@@ -18,7 +18,7 @@ repositories {
 
 dependencies {
     compile gradleApi()
-    compile 'com.google.code.findbugs:findbugs:3.0.1'
+    compile 'com.google.code.findbugs:jsr305:3.0.1'
     compile rootProject.ext.javaParser
     compile rootProject.ext.javaPoet
     compile rootProject.ext.kotlinStdlib

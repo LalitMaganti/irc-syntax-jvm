@@ -7,7 +7,6 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import java.io.File
 import java.net.URLClassLoader
-import java.util.*
 import javax.annotation.Nonnull
 import javax.lang.model.element.Modifier
 
